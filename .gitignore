@@ -1,0 +1,6 @@
+vendor/
+.DS_Store
+
+plugins/html5-qrcode/
+
+phpinfo.php

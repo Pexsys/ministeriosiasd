@@ -1,0 +1,63 @@
+services:
+
+  php-apache:
+    container_name: php-apache
+    image: php-apache
+    build: .
+    links:
+      - mysql
+    volumes:
+      - ./:/var/www/html:delegated
+    ports:
+      - 80:80
+    environment:
+      display_errors: Off
+      error_reporting: Off
+      upload_max_filesize: 64M
+      post_max_size: 64M
+      max_execution_time: 100
+      memory_limit: 128M
+      COMPOSER_ALLOW_SUPERUSER: 1
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
+    networks:
+      - pexsys
+
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/data/mysql:/var/lib/mysql:delegated
+    networks:
+      - pexsys
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:latest
+    links:
+      - mysql
+      - php-apache
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      UPLOAD_LIMIT: 300M
+    ports:
+      - 8080:80
+    networks:
+      - pexsys
+
+networks:
+  pexsys:
+    external: true
+    driver: bridge
+
+# CREATE USER 'root'@'localhost' IDENTIFIED BY 'root';
+# GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost';
+# CREATE USER 'root'@'%' IDENTIFIED BY 'root';
+# GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';

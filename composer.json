@@ -1,0 +1,15 @@
+{
+  "require": {
+    "adodb/adodb-php": "^5.22",
+    "phpmailer/phpmailer": "7.1.1",
+    "tecnickcom/tcpdf": "6.11.3"
+  },
+  "autoload": {
+    "classmap": [
+      "app/rules/classes"
+    ],
+    "files": [
+      "_config/InitSets.php"
+    ]
+  }
+}
