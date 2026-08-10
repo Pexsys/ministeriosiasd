@@ -33,7 +33,8 @@ function responseMethod()
   echo json_encode($response);
 }
 
-function dd($obj){
+function dd($obj)
+{
   var_dump($obj);
   exit;
 }
@@ -88,129 +89,140 @@ function fRequest($pVar)
   return "";
 }
 
-function verificaLogin() {
-	session_start();
-	$temPerfil = isset($_SESSION['PESSOA']['ssid']);
-	if (!$temPerfil):
-		session_destroy();
-		header("Location: ".CFG::Root()."index.php");
-		exit;
-	endif;
+function verificaLogin()
+{
+  session_start();
+  $temPerfil = isset($_SESSION['PESSOA']['ssid']);
+  if (!$temPerfil):
+    session_destroy();
+    header("Location: " . CFG::Root() . "index.php");
+    exit;
+  endif;
 }
 
-function fSetSessionLogin( $result ){
-	session_start();
-	$_SESSION['PESSOA']['ssid'] = session_id();
-	$_SESSION['PESSOA']['cd_email'] = $result->fields['cd_email'];
-	$_SESSION['PESSOA']['id'] = $result->fields['id'];
+function fSetSessionLogin($result)
+{
+  session_start();
+  $_SESSION['PESSOA']['ssid'] = session_id();
+  $_SESSION['PESSOA']['email'] = $result->fields['email'];
+  $_SESSION['PESSOA']['id'] = $result->fields['id'];
 }
 
-function fGetPerfil( $cd = NULL ) {
-	$arr = array();
-	$query = "SELECT DISTINCT td.id, td.cd, td.ds_icon, td.ds_menu, td.ds_url
-			  FROM CD_PESSOA_PERFIL cpp
-		INNER JOIN TB_PERFIL_ITEM tpi ON ( tpi.id_tb_perfil = cpp.id_tb_perfil ) 
+function fGetPerfil($cd = NULL)
+{
+  $arr = array();
+  $query = "SELECT DISTINCT td.id, td.cd, td.icon, td.ds, td.url
+			  FROM CD_PERSON_PERFIL cpp
+		INNER JOIN TB_PERFIL_ITEM tpi ON ( tpi.id_tb_profile = cpp.id_tb_profile ) 
 		INNER JOIN TB_DASHBOARD td ON ( td.id = tpi.id_tb_dashboard ) 
-			 WHERE cpp.id_cd_pessoa = ?";
-	if ( isset($cd) && !empty($cd) ):
-		$query .= " AND td.cd LIKE '$cd.%'";
-	else:
-		$query .= " AND LENGTH(td.cd) = 2";
-	endif;
-	$query .= " ORDER BY td.cd";
-	$result = CONN::get()->Execute($query, array($_SESSION['PESSOA']['id']) );
-	while (!$result->EOF):
-		$child = fGetPerfil( $result->fields['cd'] );
-		$arr[ $result->fields['id'] ] = array( 
-			"opt"	 => utf8_encode($result->fields['ds_menu']),
-			"ico"	 => $result->fields['ds_icon'],
-			"url"	 => $result->fields['ds_url'],
-			"active" => false,
-			"child"  => $child
-		);
-		$result->MoveNext();
-	endwhile;
-	return $arr;
+			 WHERE cpp.id_cd_person = ?";
+  if (isset($cd) && !empty($cd)):
+    $query .= " AND td.cd LIKE '$cd.%'";
+  else:
+    $query .= " AND LENGTH(td.cd) = 2";
+  endif;
+  $query .= " ORDER BY td.cd";
+  $result = CONN::get()->Execute($query, array($_SESSION['PESSOA']['id']));
+  while (!$result->EOF):
+    $child = fGetPerfil($result->fields['cd']);
+    $arr[$result->fields['id']] = array(
+      "opt"   => utf8_encode($result->fields['ds']),
+      "ico"   => $result->fields['icon'],
+      "url"   => $result->fields['url'],
+      "active" => false,
+      "child"  => $child
+    );
+    $result->MoveNext();
+  endwhile;
+  return $arr;
 }
 
-function fSetVerificaPerfil( $id_cd_pessoa ) {
-	//VERIFICA SE TEM AO MENOS UM PERFIL, SE NAO INSERE PERFIL BASICO 0-GUEST.
-	$resperf = CONN::get()->Execute("SELECT * FROM CD_PESSOA_PERFIL WHERE id_cd_pessoa = ?", Array( $id_cd_pessoa ) );
-	if ($resperf->EOF):
-		CONN::get()->Execute("
-			INSERT INTO CD_PESSOA_PERFIL(
-				id_cd_pessoa,
-				id_tb_perfil
+function fSetVerificaPerfil($id_cd_person)
+{
+  //VERIFICA SE TEM AO MENOS UM PERFIL, SE NAO INSERE PERFIL BASICO 0-GUEST.
+  $resperf = CONN::get()->Execute("SELECT * FROM CD_PERSON_PERFIL WHERE id_cd_person = ?", array($id_cd_person));
+  if ($resperf->EOF):
+    CONN::get()->Execute(
+      "
+			INSERT INTO CD_PERSON_PERFIL(
+				id_cd_person,
+				id_tb_profile
 			) VALUES (
 				?,
 				?
 			)",
-			Array( $id_cd_pessoa, 0 )
-		);
-	endif;
+      array($id_cd_person, 0)
+    );
+  endif;
 }
 
-function array_msort($array, $cols){
-	$colarr = array();
-	foreach ($cols as $col => $order) {
-		$colarr[$col] = array();
-		foreach ($array as $k => $row) { $colarr[$col]['_'.$k] = strtolower($row[$col]); }
-	}
-	$eval = 'array_multisort(';
-	foreach ($cols as $col => $order) {
-		$eval .= '$colarr[\''.$col.'\'],'.$order.',';
-	}
-	$eval = substr($eval,0,-1).');';
-	eval($eval);
-	$ret = array();
-	foreach ($colarr as $col => $arr) {
-		foreach ($arr as $k => $v) {
-			$k = substr($k,1);
-			if (!isset($ret[$k])) $ret[$k] = $array[$k];
-			$ret[$k][$col] = $array[$k][$col];
-		}
-	}
-	return $ret;
+function array_msort($array, $cols)
+{
+  $colarr = array();
+  foreach ($cols as $col => $order) {
+    $colarr[$col] = array();
+    foreach ($array as $k => $row) {
+      $colarr[$col]['_' . $k] = strtolower($row[$col]);
+    }
+  }
+  $eval = 'array_multisort(';
+  foreach ($cols as $col => $order) {
+    $eval .= '$colarr[\'' . $col . '\'],' . $order . ',';
+  }
+  $eval = substr($eval, 0, -1) . ');';
+  eval($eval);
+  $ret = array();
+  foreach ($colarr as $col => $arr) {
+    foreach ($arr as $k => $v) {
+      $k = substr($k, 1);
+      if (!isset($ret[$k])) $ret[$k] = $array[$k];
+      $ret[$k][$col] = $array[$k][$col];
+    }
+  }
+  return $ret;
 }
 
-function fReturnStringNull($s,$default = null){
-	if ( isset($s) && trim($s) !== "" ):
-	return utf8_decode($s);
-	endif;
-	return $default;
+function fReturnStringNull($s, $default = null)
+{
+  if (isset($s) && trim($s) !== ""):
+    return utf8_decode($s);
+  endif;
+  return $default;
 }
 
-function fReturnNumberNull($n,$default = null){
-	if ( isset($n) && is_numeric($n) ):
-	return $n;
-	endif;
-	return $default;
+function fReturnNumberNull($n, $default = null)
+{
+  if (isset($n) && is_numeric($n)):
+    return $n;
+  endif;
+  return $default;
 }
 
-function getDateNull($vl){
-	if ( !isset($vl) || empty($vl) || is_null($vl) ):
-	return null;
-	endif;
-	return fStrToDate($vl,"Y-m-d");
+function getDateNull($vl)
+{
+  if (!isset($vl) || empty($vl) || is_null($vl)):
+    return null;
+  endif;
+  return fStrToDate($vl, "Y-m-d");
 }
 
-function fDataFilters($param){
-	$strFilter = "<div class=\"col-xs-8\" id=\"divFilters\" filter-to=\"".$param["filterTo"]."\"></div>";
-	$strFilter .= "<div class=\"input-group col-xs-4 pull-right\">";
-	$strFilter .= "<select class=\"selectpicker form-control input-sm\" id=\"addFilter\" onchange=\"jsFilter.addFilter(this);\" data-width=\"100%\" title=\"Adicionar filtros\" data-width=\"auto\" data-container=\"body\">";
-	$arr = array_msort( $param["filters"], array('label' => SORT_ASC) );
-	foreach ($arr as $key => $value):
-		$strFilter .= "<option value=\"".$value["value"]."\"";
-		if (isset($value["unique"])):
-			$strFilter .= " data-tokens=\"unique\"";
-		endif;
-		$strFilter .= ">";
-		$strFilter .= $value["label"]."</option>";
-	endforeach;
-	$strFilter .= "</select>";
-	$strFilter .= "</div>";
-	$strFilter .= "<div class=\"form-group col-xs-12\"><a role=\"button\" class=\"btn btn-info btn-sm\" id=\"applyFilter\" style=\"color:#ffffff;display:none\" onclick=\"jsFilter.apply();\"><i class=\"glyphicon glyphicon-cog\"></i>&nbsp;Aplicar Filtro</a></div>";
-	$strFilter .= "<br/>";
-	echo $strFilter;
+function fDataFilters($param)
+{
+  $strFilter = "<div class=\"col-xs-8\" id=\"divFilters\" filter-to=\"" . $param["filterTo"] . "\"></div>";
+  $strFilter .= "<div class=\"input-group col-xs-4 pull-right\">";
+  $strFilter .= "<select class=\"selectpicker form-control input-sm\" id=\"addFilter\" onchange=\"jsFilter.addFilter(this);\" data-width=\"100%\" title=\"Adicionar filtros\" data-width=\"auto\" data-container=\"body\">";
+  $arr = array_msort($param["filters"], array('label' => SORT_ASC));
+  foreach ($arr as $key => $value):
+    $strFilter .= "<option value=\"" . $value["value"] . "\"";
+    if (isset($value["unique"])):
+      $strFilter .= " data-tokens=\"unique\"";
+    endif;
+    $strFilter .= ">";
+    $strFilter .= $value["label"] . "</option>";
+  endforeach;
+  $strFilter .= "</select>";
+  $strFilter .= "</div>";
+  $strFilter .= "<div class=\"form-group col-xs-12\"><a role=\"button\" class=\"btn btn-info btn-sm\" id=\"applyFilter\" style=\"color:#ffffff;display:none\" onclick=\"jsFilter.apply();\"><i class=\"glyphicon glyphicon-cog\"></i>&nbsp;Aplicar Filtro</a></div>";
+  $strFilter .= "<br/>";
+  echo $strFilter;
 }
-?>

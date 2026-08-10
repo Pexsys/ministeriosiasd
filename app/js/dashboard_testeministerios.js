@@ -87,7 +87,7 @@ function mapQuestao() {
     var value = $(this).val();
     jsLIB.ajax({
       url: `${jsLIB.rootDir}app/api/tests/`,
-      data: { MethodName: 'setRsMinisterios', data: { id_qs: $(this).attr('id-questao'), nr_nota: value } },
+      data: { MethodName: 'setRsMinisterios', data: { id_qs: $(this).attr('id-questao'), grade: value } },
       success: function (data, jqxhr) {
         if (data.return == true) {
           e.preventDefault();

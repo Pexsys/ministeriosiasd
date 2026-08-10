@@ -22,20 +22,20 @@ function getQueryByFilter($parameters)
         $where .= " AND cd.id " . $notStr . "IN";
 
       elseif ($key == "DI"):
-        $where .= " AND hrid.nr_item " . $notStr . "IN";
+        $where .= " AND hrid.seq " . $notStr . "IN";
       elseif ($key == "DA"):
-        $where .= " AND hrid.nr_item > ";
+        $where .= " AND hrid.seq > ";
       elseif ($key == "DE"):
-        $where .= " AND hrid.nr_item < ";
+        $where .= " AND hrid.seq < ";
 
       elseif ($key == "M"):
         $where .= " AND cm.id " . $notStr . "IN";
       elseif ($key == "MI"):
-        $where .= " AND hrim.nr_item " . $notStr . "IN";
+        $where .= " AND hrim.seq " . $notStr . "IN";
       elseif ($key == "MA"):
-        $where .= " AND hrim.nr_item > ";
+        $where .= " AND hrim.seq > ";
       elseif ($key == "ME"):
-        $where .= " AND hrim.nr_item < ";
+        $where .= " AND hrim.seq < ";
 
       else:
         $where .= " AND";
@@ -74,14 +74,14 @@ function getQueryByFilter($parameters)
   endif;
 
   $query = "
-	SELECT DISTINCT p.id, p.nm, p.cd_email, crd.id AS id_rd, crm.id AS id_rm
-	FROM CD_PESSOA p
-	LEFT JOIN CON_RESULTADO_LAST crd ON (crd.id_cd_pessoa = p.id AND crd.tp = 'D')
-	LEFT JOIN HS_RESULT_ITEM hrid ON (hrid.id_hs_resultado = crd.id)
-	LEFT JOIN CON_CD_DONS cd ON (cd.id = hrid.id_origem)  
-	LEFT JOIN CON_RESULTADO_LAST crm ON (crm.id_cd_pessoa = p.id AND crm.tp = 'M')
-	LEFT JOIN HS_RESULT_ITEM hrim ON (hrim.id_hs_resultado = crm.id)
-	LEFT JOIN CON_CD_MINISTERIOS cm ON (cm.id = hrim.id_origem)
+	SELECT DISTINCT p.id, p.nm, p.email, crd.id AS id_rd, crm.id AS id_rm
+	FROM CD_PERSON p
+	LEFT JOIN CON_RESULTADO_LAST crd ON (crd.id_cd_person = p.id AND crd.tp = 'D')
+	LEFT JOIN HS_RESULT_ITEM hrid ON (hrid.id_hs_result = crd.id)
+	LEFT JOIN CON_CD_DONS cd ON (cd.id = hrid.id_source)  
+	LEFT JOIN CON_RESULTADO_LAST crm ON (crm.id_cd_person = p.id AND crm.tp = 'M')
+	LEFT JOIN HS_RESULT_ITEM hrim ON (hrim.id_hs_result = crm.id)
+	LEFT JOIN CON_CD_MINISTRIES cm ON (cm.id = hrim.id_source)
 	WHERE 1=1 $where ORDER BY p.NM";
 
   //print_r($aWhere);
@@ -97,7 +97,7 @@ function getPeople($parameters)
     $arr[] = array(
       "id" => $fields["id"],
       "nm" => utf8_encode($fields["nm"]),
-      "em" => $fields["cd_email"],
+      "em" => $fields["email"],
       "rd" => $fields["id_rd"],
       "rm" => $fields["id_rm"]
     );
@@ -134,7 +134,7 @@ function insertMember($parameters)
     if (isset($parameters["nm"])):
 
       CONN::get()->Execute("
-				INSERT INTO CD_PESSOA(nm)
+				INSERT INTO CD_PERSON(nm)
         VALUES (?)
 			", array($parameters["nm"]));
       $id = CONN::get()->Insert_ID();
@@ -149,14 +149,14 @@ function getMember($parameters)
   $arr = array();
   $arr["result"] = false;
 
-  $result = CONN::get()->Execute("SELECT * FROM CD_PESSOA WHERE id = ?", array($parameters["id"]));
+  $result = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE id = ?", array($parameters["id"]));
   if (!$result->EOF):
     $arr["result"] = true;
 
     $arr["membro"] = array(
       "cd_pessoa-id"    => $result->fields['id'],
       "cd_pessoa-nm"    => utf8_encode(trim($result->fields['nm'])),
-      "cd_pessoa-cd_email"  => trim($result->fields['cd_email'])
+      "cd_pessoa-email"  => trim($result->fields['email'])
     );
   endif;
   $arr["testes"] = Testes::VerificaTestes($parameters["id"]);

@@ -3,18 +3,18 @@ class Testes
 {
   public static function ExistHistorico($id, $tp)
   {
-    return CONN::get()->Execute("SELECT * FROM HS_RESULTADO WHERE tp = ? AND id_cd_pessoa = ? ORDER BY dh_conclusao DESC", array($tp, $id));
+    return CONN::get()->Execute("SELECT * FROM HS_RESULTS WHERE tp = ? AND id_cd_person = ? ORDER BY dh_conclusion DESC", array($tp, $id));
   }
 
   public static function QueryResult($id)
   {
     return CONN::get()->Execute("
-	    SELECT p.cd_email, p.nm, r.dh_conclusao, r.dh_fim_validade, r.tp, i.id_origem, i.ds_item, i.nr_item, i.cd_origem
-	      FROM HS_RESULTADO r
-	INNER JOIN HS_RESULT_ITEM i ON (i.id_hs_resultado = r.id)
-	INNER JOIN CD_PESSOA p ON (p.id = r.id_cd_pessoa)
+	    SELECT p.email, p.nm, r.dh_conclusion, r.dh_fin_valid, r.tp, i.id_source, i.ds, i.seq, i.cd_source
+	      FROM HS_RESULTS r
+	INNER JOIN HS_RESULT_ITEM i ON (i.id_hs_result = r.id)
+	INNER JOIN CD_PERSON p ON (p.id = r.id_cd_person)
 	     WHERE r.id = ?
-	  ORDER BY i.nr_item DESC, i.ds_item
+	  ORDER BY i.seq DESC, i.ds
 	", array($id));
   }
 
@@ -24,8 +24,8 @@ class Testes
 
     $qtds = CONN::get()->Execute("
 	    SELECT 
-	    (SELECT COUNT(*) FROM CON_QS_DONS) AS nr_qst, 
-	    (SELECT COUNT(*) FROM RP_DONS WHERE id_cd_pessoa = ?) AS nr_rsp
+	    (SELECT COUNT(*) FROM CD_GIFTS_SVY) AS nr_qst, 
+	    (SELECT COUNT(*) FROM ASW_GIFTS WHERE id_cd_person = ?) AS nr_rsp
 	", array($id));
     if (!$qtds->EOF):
       $arr["nr_qst"] = $qtds->fields['nr_qst'];
@@ -41,8 +41,8 @@ class Testes
 
     $qtds = CONN::get()->Execute("
 	    SELECT 
-	    (SELECT COUNT(*) FROM CON_CD_MINISTERIOS) AS nr_qst, 
-	    (SELECT COUNT(*) FROM RP_MINISTERIOS WHERE id_cd_pessoa = ?) AS nr_rsp
+	    (SELECT COUNT(*) FROM CON_CD_MINISTRIES) AS nr_qst, 
+	    (SELECT COUNT(*) FROM ASW_MINISTRIES WHERE id_cd_person = ?) AS nr_rsp
 	", array($id));
     if (!$qtds->EOF):
       $arr["nr_qst"] = $qtds->fields['nr_qst'];
@@ -85,9 +85,9 @@ class Testes
     if ($dons["nr_rsp"] == 0):
 
       //SE PASSOU DO PRAZO DE VALIDADE, ABRE AUTOMATICAMENTE NOVO TESTE.
-      $result = CONN::get()->Execute("SELECT 1 FROM HS_RESULTADO WHERE id_cd_pessoa = ? AND dh_fim_validade > NOW() AND tp = ?", array($id, 'D'));
+      $result = CONN::get()->Execute("SELECT 1 FROM HS_RESULTS WHERE id_cd_person = ? AND dh_fin_valid > NOW() AND tp = ?", array($id, 'D'));
       if ($result->EOF):
-        CONN::get()->Execute("INSERT INTO RP_DONS(id_cd_pessoa, id_qs_dons) VALUES (?,?) ", array($id, 1));
+        CONN::get()->Execute("INSERT INTO ASW_GIFTS(id_cd_person, id_qs_gifts) VALUES (?,?) ", array($id, 1));
         $arr["dons"] = static::RetornaTesteDonsQuantidades($id);
       endif;
     else:
@@ -98,9 +98,9 @@ class Testes
     $minis = static::RetornaTesteMinisteriosQuantidades($id);
     if ($minis["nr_rsp"] == 0):
       //SE PASSOU DO PRAZO DE VALIDADE, ABRE AUTOMATICAMENTE NOVO TESTE.
-      $result = CONN::get()->Execute("SELECT 1 FROM HS_RESULTADO WHERE id_cd_pessoa = ? AND dh_fim_validade > NOW() AND tp = ?", array($id, 'M'));
+      $result = CONN::get()->Execute("SELECT 1 FROM HS_RESULTS WHERE id_cd_person = ? AND dh_fin_valid > NOW() AND tp = ?", array($id, 'M'));
       if ($result->EOF):
-        CONN::get()->Execute("INSERT INTO RP_MINISTERIOS(id_cd_pessoa, id_cd_ministerios) VALUES (?,?) ", array($id, 1));
+        CONN::get()->Execute("INSERT INTO ASW_MINISTRIES(id_cd_person, id_cd_ministries) VALUES (?,?) ", array($id, 1));
         $arr["minis"] = static::RetornaTesteMinisteriosQuantidades($id);
       endif;
     else:

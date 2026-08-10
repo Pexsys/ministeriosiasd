@@ -6,17 +6,17 @@ $hint = fRequest("hint");
 
 if ($id != ""):
 
-  $result = CONN::get()->Execute("SELECT * FROM CD_PESSOA WHERE cd_valido = ? AND fg_ativo = 'N'", array($id));
+  $result = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE cd_valid = ? AND is_active = 'N'", array($id));
   if ($result->EOF):
     header("location:" . $GLOBALS['VirtualDir'] . "login.php");
     exit;
   else:
-    $hint = $result->fields['cd_email'];
+    $hint = $result->fields['email'];
     $nome = ucwords(mb_strtolower($result->fields['nm']));
-    $id_cd_pessoa = $result->fields['id'];
+    $id_cd_person = $result->fields['id'];
 
     //ATUALIZA USUARIO, VALIDANDO DADOS.
-    CONN::get()->Execute("UPDATE CD_PESSOA SET fg_ativo = 'S', ds_senha = NULL, cd_valido = null, nr_tent = 0 WHERE id = ?", array($id_cd_pessoa));
+    CONN::get()->Execute("UPDATE CD_PERSON SET is_active = 'S', pass = NULL, cd_valid = null, tent = 0 WHERE id = ?", array($id_cd_person));
   endif;
 endif;
 ?>

@@ -136,7 +136,7 @@ $(document).ready(function () {
 
         if (field && input.attr('valid') == 'ok') {
           formPopulated = false;
-          if (field == "cd_pessoa-cd_email") {
+          if (field == "cd_pessoa-email") {
             value = value.toLowerCase();
           } else {
             value = value.toUpperCase();
@@ -319,7 +319,7 @@ $(document).ready(function () {
       var obj = $(this);
       jsLIB.ajax({
         url: `${jsLIB.rootDir}app/api/tests/`,
-        data: { MethodName: 'setRsMinisteriosDirect', data: { id_pessoa: $('#divTestBody').attr('id-pessoa'), id_qs: obj.attr('id-questao'), nr_nota: obj.val() } },
+        data: { MethodName: 'setRsMinisteriosDirect', data: { id_pessoa: $('#divTestBody').attr('id-pessoa'), id_qs: obj.attr('id-questao'), grade: obj.val() } },
         success: function (data, jqxhr) {
           if (data.return == true) {
             e.preventDefault();

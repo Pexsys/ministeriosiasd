@@ -8,7 +8,7 @@ $hint = fRequest("hint");
 //INSTRUCAO PARA VALIDAR O EMAIL
 if ($hint != ""):
 
-  $result = CONN::get()->Execute("SELECT * FROM CD_PESSOA WHERE cd_valido IS NOT NULL AND fg_ativo = 'N' AND cd_email = ?", array($hint));
+  $result = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE cd_valid IS NOT NULL AND is_active = 'N' AND email = ?", array($hint));
   if ($result->EOF):
     header("location:" . $GLOBALS['VirtualDir'] . "login.php");
     exit;
@@ -21,19 +21,19 @@ if ($hint != ""):
 elseif ($id != ""):
   @include_once("rules/testes.php");
 
-  $result = CONN::get()->Execute("SELECT * FROM CD_PESSOA WHERE cd_valido = ? AND fg_ativo = 'N'", array($id));
+  $result = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE cd_valid = ? AND is_active = 'N'", array($id));
   if ($result->EOF):
     header("location:" . $GLOBALS['VirtualDir'] . "login.php");
     exit;
   else:
     $nome = ucwords(mb_strtolower($result->fields['nm']));
-    $id_cd_pessoa = $result->fields['id'];
+    $id_cd_person = $result->fields['id'];
 
     //ATUALIZA USUARIO, VALIDANDO DADOS.
-    CONN::get()->Execute("UPDATE CD_PESSOA SET fg_ativo = 'S', cd_valido = null, nr_tent = 0 WHERE id = ?", array($id_cd_pessoa));
+    CONN::get()->Execute("UPDATE CD_PERSON SET is_active = 'S', cd_valid = null, tent = 0 WHERE id = ?", array($id_cd_person));
 
-    fSetVerificaPerfil($id_cd_pessoa);
-    fVerificaTestes($id_cd_pessoa);
+    fSetVerificaPerfil($id_cd_person);
+    fVerificaTestes($id_cd_person);
     fSetSessionLogin($result);
   endif;
 endif;
