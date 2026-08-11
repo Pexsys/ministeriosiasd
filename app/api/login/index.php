@@ -53,7 +53,7 @@ function login($parameters)
           CONN::get()->Execute("UPDATE CD_PERSON SET tent = 0 WHERE id = ?", array($idBD));
           Testes::VerificaTestes($idBD);
           fSetSessionLogin($result);
-          $arr['page'] = CFG::Root() . "dashboard.php";
+          $arr['page'] = CFG::Root() . "app/view/dashboard.php";
           $arr['login'] = true;
 
         //SE ERROU A SENHA MAIS DO QUE 3 VEZES

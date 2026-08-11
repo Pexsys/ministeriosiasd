@@ -2,7 +2,6 @@
 <script src="<?= CFG::Root(); ?>assets/js/datatable/ZeroClipboard.js"></script>
 <script src="<?= CFG::Root(); ?>assets/js/datatable/dataTables.bootstrap.min.js"></script>
 <?php
-@require_once("rules/testes.php");
 $testes = Testes::VerificaTestes($_SESSION['PESSOA']['id']);
 
 //SE EXISTE TESTE DE MINISTERIOS PENDENTE
@@ -78,7 +77,7 @@ foreach (Testes::ExistHistorico($_SESSION['PESSOA']['id'], 'M') as $result):
           <tbody>
             <?php
             $ordem = 0;
-            foreach (fQueryResult($result['id']) as $rsitem):
+            foreach (Testes::QueryResult($result['id']) as $rsitem):
             ?>
               <tr>
                 <td><?php echo ++$ordem; ?>&ordm;</td>

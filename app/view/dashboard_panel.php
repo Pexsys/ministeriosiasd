@@ -26,9 +26,7 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>
-
 <script src="<?= CFG::Root(); ?>js/dashboard_panel.js"></script>

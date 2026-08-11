@@ -2,7 +2,6 @@
 <script src="<?= CFG::Root(); ?>assets/js/datatable/ZeroClipboard.js"></script>
 <script src="<?= CFG::Root(); ?>assets/js/datatable/dataTables.bootstrap.min.js"></script>
 <script src="<?= CFG::Root(); ?>assets/js/jquery-progress-bar.js"></script>
-<?php @require_once("rules/testes.php"); ?>
 <div class="col-xs-12 col-md-12" id="divTest" style="display:none">
   <div class="row">
     <div class="text-center">
@@ -38,7 +37,6 @@
     </div>
   </div>
 </div>
-
 <div id="divGridSearch" style="display:block">
   <div class="row">
     <div class="col-xs-12 col-md-12">
@@ -98,7 +96,6 @@
     </div>
   </div>
 </div>
-
 <div class="modal fade" id="membrosModal" role="dialog" data-backdrop="static">
   <div class="modal-dialog">
     <div class="modal-body">
@@ -136,5 +133,4 @@
     </div>
   </div>
 </div>
-
 <script src="<?= CFG::Root(); ?>js/searchPeople.js<?php echo "?" . microtime(); ?>"></script>

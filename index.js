@@ -30,12 +30,10 @@ $(document).ready(function () {
         async: true,
         data: { MethodName: 'login', username: $('#email').val(), password: $.sha1($('#psw').val()) },
         success: (data, jqxhr) => {
-          e.preventDefault();
-          console.log(data, jqxhr);
-          // if (data.login == true) window.location.replace(data.page);
-          // else loginError(data.message);
+          if (data.login == true) window.location.replace(data.page);
+          else loginError(data.message);
         },
-        // error: loginError,
+        error: loginError,
       });
     });
 });

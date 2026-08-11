@@ -1,5 +1,5 @@
 <?php
-@require_once("include/functions.php");
+@require_once("../rules/functions.php");
 verificaLogin();
 
 $result = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE id = ?", array($_SESSION['PESSOA']['id']));
@@ -81,7 +81,6 @@ $perfil = fSetActive($arvore, fRequest("id"));
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" ng-app="angular-app" lang="pt-br" dir="ltr">
-
 <head>
   <meta charset="utf-8" />
   <title>Dashboard</title>
@@ -111,7 +110,6 @@ $perfil = fSetActive($arvore, fRequest("id"));
   <script src="<?= CFG::Root(); ?>assets/js/bootstrap-dialog.min.js"></script>
   <script src="<?= CFG::Root(); ?>assets/js/formValidation/formValidation.min.js"></script>
   <script src="<?= CFG::Root(); ?>assets/js/formValidation/bootstrap.min.js"></script>
-
   <script src="<?= CFG::Root(); ?>assets/js/slimscroll/jquery.slimscroll.min.js"></script>
   <script src="<?= CFG::Root(); ?>js/functions.lib.js?<?php echo microtime(); ?>"></script>
   <script>
@@ -119,7 +117,6 @@ $perfil = fSetActive($arvore, fRequest("id"));
   </script>
   <script src="<?= CFG::Root(); ?>js/dashboard.js?<?php echo microtime(); ?>"></script>
 </head>
-
 <body>
   <div class="loading-container">
     <div class="loader"></div>
@@ -215,5 +212,4 @@ $perfil = fSetActive($arvore, fRequest("id"));
   </div>
 </body>
 <script src="<?= CFG::Root(); ?>assets/js/beyond.min.js"></script>
-
 </html>

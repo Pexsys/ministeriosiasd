@@ -189,7 +189,7 @@ class RESULTS extends TCPDF
 $pdf = new RESULTS();
 
 
-$result = fQueryResult(fRequest("id"));
+$result = Testes::QueryResult(fRequest("id"));
 if ($result->EOF):
   exit("Resultado inválido. Consulte do administrador do sistema.");
 endif;
