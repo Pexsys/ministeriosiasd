@@ -5,9 +5,10 @@
 <script src="<?= CFG::Root(); ?>assets/js/jquery-progress-bar.js"></script>
 <?php
 $testes = Testes::VerificaTestes($_SESSION['PESSOA']['id']);
+var_dump($testes);
 
 //SE EXISTE TESTE DE DONS PENDENTE
-if ($testes["dons"]["nr_rsp"] > 0):
+if ($testes["dons"]["nr_rsp"] >= 0):
 ?>
   <div class="row">
     <div class="col-xs-12 col-md-12 text-center">

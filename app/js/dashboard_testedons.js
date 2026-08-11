@@ -1,4 +1,35 @@
 $(document).ready(function () {
+
+  function fSetControle(pcConc) {
+    $('#myProgressbar').progressbar(pcConc);
+    if (pcConc < 100) {
+      $('#myProgressbar').show();
+      $('#btnFinishDons').hide();
+    } else {
+      $('#myProgressbar').hide();
+      $('#btnFinishDons').show();
+    }
+  }
+
+  function mapQuestao() {
+    $("[name=questao]").change(function (e) {
+      var value = $(this).val();
+      jsLIB.ajax({
+        url: `${jsLIB.rootDir}app/api/tests/`,
+        data: { MethodName: 'setRsDons', data: { id_qs: $(this).attr('id-questao'), id_rs: value } },
+        success: function (data, jqxhr) {
+          if (data.return == true) {
+            e.preventDefault();
+            fSetControle(data.result.pc_conc);
+          }
+        }
+      });
+
+      if (value != '') $(this).parent().removeClass('has-error').addClass('has-success');
+      else $(this).parent().removeClass('has-success').addClass('has-error');
+    });
+  }
+
   $('#simpledatatable')
     .on('init.dt', function () {
       mapQuestao();
@@ -11,7 +42,7 @@ $(document).ready(function () {
       searching: false,
       processing: true,
       language: {
-        info: "_START_ a _END_ de _TOTAL_ quest&otilde;es",
+        info: "_START_ a _END_ de _TOTAL_ questões",
         infoEmpty: "N&atilde;o h&aacute; respostas pendentes",
         loadingRecords: "Aguarde - carregando...",
         paginate: {
@@ -21,7 +52,12 @@ $(document).ready(function () {
           last: '>>'
         }
       },
-      data: prepareData(),
+      ajax: {
+        type: "POST",
+        url: `${jsLIB.rootDir}app/api/tests/`,
+        data: () => ({ MethodName: "questoesDons" }),
+        dataSrc: "questoes"
+      },
       columns: [
         {
           data: 'ds_qst',
@@ -72,44 +108,3 @@ $(document).ready(function () {
   });
 
 });
-
-function mapQuestao() {
-  $("[name=questao]").change(function (e) {
-    var value = $(this).val();
-
-    jsLIB.ajax({
-      url: `${jsLIB.rootDir}app/api/tests/`,
-      data: { MethodName: 'setRsDons', data: { id_qs: $(this).attr('id-questao'), id_rs: value } },
-      success: function (data, jqxhr) {
-        if (data.return == true) {
-          e.preventDefault();
-          fSetControle(data.result.pc_conc);
-        }
-      }
-    });
-
-    if (value != '') {
-      $(this).parent().removeClass('has-error').addClass('has-success');
-    } else {
-      $(this).parent().removeClass('has-success').addClass('has-error');
-    }
-  });
-}
-
-function prepareData() {
-  data = jsLIB.ajax({ url: `${jsLIB.rootDir}app/api/tests/`, data: { MethodName: 'questoesDons' } });
-  fSetControle(data.result.pc_conc);
-  return data.questoes;
-
-}
-
-function fSetControle(pcConc) {
-  $('#myProgressbar').progressbar(pcConc);
-  if (pcConc < 100) {
-    $('#myProgressbar').show();
-    $('#btnFinishDons').hide();
-  } else {
-    $('#myProgressbar').hide();
-    $('#btnFinishDons').show();
-  }
-}
