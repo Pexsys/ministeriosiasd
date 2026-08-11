@@ -47,4 +47,4 @@
     </div>
   </div>
 </div>
-<script src="<?= CFG::Root(); ?>js/searchGift.js<?php echo "?" . microtime(); ?>"></script>
+<script src="<?= CFG::Root(); ?>app/js/searchGift.js<?php echo "?" . microtime(); ?>"></script>

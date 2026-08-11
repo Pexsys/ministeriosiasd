@@ -67,4 +67,14 @@ class Session
     static::Remove('EAI');
     if (session_status() === PHP_SESSION_ACTIVE) session_destroy();
   }
+
+  public static function LoginVerify()
+  {
+    $temPerfil = isset($_SESSION['PESSOA']['ssid']);
+    if (!$temPerfil):
+      session_destroy();
+      header("Location: " . CFG::Root() . "index.php");
+      exit;
+    endif;
+  }
 }

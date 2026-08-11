@@ -29,4 +29,4 @@
     </div>
   </div>
 </div>
-<script src="<?= CFG::Root(); ?>js/dashboard_panel.js"></script>
+<script src="<?= CFG::Root(); ?>app/js/dashboard_panel.js"></script>

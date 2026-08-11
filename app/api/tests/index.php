@@ -96,11 +96,11 @@ function questoesDons()
 	FROM CD_GIFTS_SVY cgs
 	LEFT JOIN ASW_GIFTS r ON (r.id_qs_gifts = cgs.id AND (r.id_cd_person = ? OR r.id_cd_person IS NULL))
 	ORDER BY q.seq", array($_SESSION['PESSOA']['id']));
-  while (!$result->EOF):
+  foreach ($result as $key => $fields):
     ++$tabindex;
-    $id = $result->fields['id'];
-    $cd = $result->fields['cd'];
-    $cd_asw_gifts = $result->fields['cd_asw_gifts'];
+    $id = $fields['id'];
+    $cd = $fields['cd'];
+    $cd_asw_gifts = $fields['cd_asw_gifts'];
     $classField = isset($cd_asw_gifts) ? "has-success" : "has-error";
 
     $cmb_resposta_base = "<select class=\"input-sm\" name=\"questao\" id-questao=\"$id\" tabindex=\"$tabindex\">";
@@ -112,10 +112,9 @@ function questoesDons()
 			  FROM CD_GIFTS_ASW
 			 WHERE cd = ?
 			ORDER BY seq", array($cd));
-      while (!$resposta->EOF):
-        $optionsResposta .= "<option value=\"" . $resposta->fields['id'] . "\">" . utf8_encode($resposta->fields['ds']) . "</option>";
-        $resposta->MoveNext();
-      endwhile;
+      foreach ($resposta as $key => $value):
+        $optionsResposta .= "<option value=\"" . $value['id'] . "\">" . utf8_encode($value['ds']) . "</option>";
+      endforeach;
     endif;
 
     if (isset($cd_asw_gifts)):
@@ -126,15 +125,13 @@ function questoesDons()
     $cmb_resposta_base .= "</select>";
 
     $texto = "<div class=\"form-group $classField\">";
-    $texto .= utf8_encode($result->fields['prefix']) . "&nbsp;$cmb_resposta_base&nbsp;" . utf8_encode($result->fields['ds']);
+    $texto .= utf8_encode($fields['prefix']) . "&nbsp;$cmb_resposta_base&nbsp;" . utf8_encode($fields['ds']);
     $texto .= "</div>";
 
     $arr[] = array(
       "ds_qst" => $texto
     );
-
-    $result->MoveNext();
-  endwhile;
+  endforeach;
   return array("result" => Testes::RetornaTesteDonsQuantidades($_SESSION['PESSOA']['id']), "questoes" => $arr);
 }
 

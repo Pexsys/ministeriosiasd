@@ -52,7 +52,7 @@ function login($parameters)
         elseif ($senhaBD == $psw):
           CONN::get()->Execute("UPDATE CD_PERSON SET tent = 0 WHERE id = ?", array($idBD));
           Testes::VerificaTestes($idBD);
-          fSetSessionLogin($result);
+          Profile::SetSessionLogin($result);
           $arr['page'] = CFG::Root() . "app/view/dashboard.php";
           $arr['login'] = true;
 
@@ -119,10 +119,10 @@ function register($parameters)
           if (!empty($psw) && (is_null($senhaBD) || empty($senhaBD))):
             CONN::get()->Execute("UPDATE CD_PERSON SET pass = ?, tent = 0 WHERE id = ?", array($psw, $idBD));
 
-            fSetVerificaPerfil($idBD);
+            Profile::VerificaPerfil($idBD);
             Testes::VerificaTestes($idBD);
-            fSetSessionLogin($result);
-            $arr['page'] = CFG::Root() . "dashboard.php";
+            Profile::SetSessionLogin($result);
+            $arr['page'] = CFG::Root() . "app/view/dashboard.php";
             $arr['register'] = true;
 
           //TEM SENHA NO BANCO, MAS NAO LEMBRA A SENHA

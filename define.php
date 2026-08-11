@@ -22,8 +22,6 @@ endif;
 ?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" ng-app="angular-app">
-<!--Head-->
-
 <head>
   <meta charset="utf-8" />
   <title>Minist&eacute;rios IASD - Esqueci a senha</title>
@@ -36,16 +34,13 @@ endif;
   <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/font-awesome.min.css" rel="stylesheet" />
   <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300" rel="stylesheet" type="text/css">
-  <link id="beyond-link" href="<?= CFG::Root(); ?>assets/css/beyond.min.css" rel="stylesheet" />
+  <link href="<?= CFG::Root(); ?>assets/css/beyond.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/demo.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/animate.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/bootstrap-select.min.css" rel="stylesheet" />
   <link id="skin-link" href="" rel="stylesheet" type="text/css" />
   <script src="<?= CFG::Root(); ?>assets/js/skins.min.js"></script>
 </head>
-<!--Head Ends-->
-<!--Body-->
-
 <body>
   <div class="login-container animated fadeInDown">
     <div class="loginbox bg-white">
@@ -130,7 +125,5 @@ endif;
   <script src="<?= CFG::Root(); ?>app/js/functions.lib.js?<?= microtime(); ?>"></script>
   <script src="<?= CFG::Root(); ?>define.js?<?= microtime(); ?>"></script>
   <script>jsLIB.rootDir = '<?= CFG::Root(); ?>';</script>
-
 </body>
-
 </html>

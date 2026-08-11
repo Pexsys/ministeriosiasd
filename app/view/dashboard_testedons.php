@@ -89,4 +89,4 @@ foreach (Testes::ExistHistorico($_SESSION['PESSOA']['id'], 'D') as $result):
 <?php
 endforeach;
 ?>
-<script src="<?= CFG::Root(); ?>js/dashboard_testedons.js<?php echo "?" . microtime(); ?>"></script>
+<script src="<?= CFG::Root(); ?>app/js/dashboard_testedons.js<?php echo "?" . microtime(); ?>"></script>

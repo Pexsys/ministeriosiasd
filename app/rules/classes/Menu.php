@@ -1,32 +1,48 @@
 <?php
 class Menu
 {
-  static public function Monta($options)
+  static public function Monta($perfil)
   {
-    foreach ($options as $key => $option) :
-      $icon = $option["icon"];
-      $route = $option["route"];
-      $text = $option["text"];
-      $modal = $option["modal"];
-      echo "<li class=\"nav-item\">";
-      echo "<a href=\"#\" class=\"nav-link\"" .
-        (!empty($route) ? " route=\"$route\"" : "") .
-        (!empty($modal) ? " modal=\"$modal\"" : "") .
-        (!empty($icon) ? " ico=\"$icon\"" : "") .
-        ">";
-      if (!empty($icon)) echo "<i class=\"nav-icon $icon\"></i> ";
-      echo "<p>$text";
-      if (isset($option["children"]) && count($option["children"]) > 0) echo "<i class=\"right fas fa-angle-left\"></i>";
-      echo "</p></a>";
-      if (isset($option["children"]) && count($option["children"]) > 0) :
-        echo "<ul class=\"nav nav-treeview\">";
-        static::Monta($option["children"]);
+    $retorno = array();
+    foreach ($perfil as $key => $value):
+      $opt = $value["opt"];
+      $ico = $value["ico"];
+      $url = $value["url"];
+
+      $urlEmpty = empty($url);
+      $class = "";
+      if ($value["active"]):
+        $class = " class=\"" . ($urlEmpty ? "open" : "active") . "\"";
+        if (!$urlEmpty):
+          $retorno = array("opt" => $opt, "url" => $url);
+        endif;
+      endif;
+      echo "<li$class>";
+      if (!$urlEmpty):
+        echo "<a href=\"" . CFG::Root() . "dashboard.php?id=$key\">";
+      else:
+        echo "<a href=\"#\" class=\"menu-dropdown\">";
+      endif;
+      if (!empty($ico)):
+        echo "<i class=\"$ico\"></i>";
+      endif;
+      echo "<span class=\"menu-text\">$opt</span>";
+      if (count($value["child"]) > 0):
+        echo "<i class=\"menu-expand\"></i>";
+      endif;
+      echo "</a>";
+      if (count($value["child"]) > 0):
+        echo "<ul class=\"submenu\" style=\"display: none;\">";
+        $ax = static::Monta($value["child"]);
+        if (count($retorno) == 0):
+          $retorno = $ax;
+        endif;
         echo "</ul>";
       endif;
       echo "</li>";
     endforeach;
+    return $retorno;
   }
-
   public static function List($profile, $event = null)
   {
     $onJoinEvent = " IS NULL";
@@ -97,7 +113,7 @@ class Menu
             "selected" => $checked,
           );
         endif;
-        
+
         if (count($children) > 0) $opt["children"] = $children;
 
         $arr[] = $opt;

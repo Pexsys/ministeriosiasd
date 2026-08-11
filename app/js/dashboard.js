@@ -2,7 +2,7 @@
 $(window).bind("load", function () {
   $("#myBtnLogout").click(function () {
     jsLIB.ajax({ url: `${jsLIB.rootDir}app/api/login/`, data: { MethodName: 'logout' } });
-    window.location.replace(`${jsLIB.rootDir}indesx.php`);
+    window.location.replace(`${jsLIB.rootDir}index.php`);
   });
   mapPrintResults();
 });

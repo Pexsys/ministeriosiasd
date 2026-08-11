@@ -19,8 +19,6 @@ if ($hint != ""):
 
 //LINK POR EMAIL
 elseif ($id != ""):
-  @include_once("rules/testes.php");
-
   $result = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE cd_valid = ? AND is_active = 'N'", array($id));
   if ($result->EOF):
     header("location:" . $GLOBALS['VirtualDir'] . "login.php");
@@ -32,9 +30,9 @@ elseif ($id != ""):
     //ATUALIZA USUARIO, VALIDANDO DADOS.
     CONN::get()->Execute("UPDATE CD_PERSON SET is_active = 'S', cd_valid = null, tent = 0 WHERE id = ?", array($id_cd_person));
 
-    fSetVerificaPerfil($id_cd_person);
-    fVerificaTestes($id_cd_person);
-    fSetSessionLogin($result);
+    Profile::VerificaPerfil($id_cd_person);
+    Testes::VerificaTestes($id_cd_person);
+    Profile::SetSessionLogin($result);
   endif;
 endif;
 ?>
@@ -54,7 +52,7 @@ endif;
   <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/font-awesome.min.css" rel="stylesheet" />
   <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300" rel="stylesheet" type="text/css">
-  <link id="beyond-link" href="<?= CFG::Root(); ?>assets/css/beyond.min.css" rel="stylesheet" />
+  <link href="<?= CFG::Root(); ?>assets/css/beyond.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/demo.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/animate.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/bootstrap-select.min.css" rel="stylesheet" />

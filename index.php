@@ -17,7 +17,7 @@ Session::Clear();
   <link href="<?= CFG::Root(); ?>assets/css/font-awesome.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/weather-icons.min.css" rel="stylesheet" />
   <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300" rel="stylesheet" type="text/css">
-  <link href="<?= CFG::Root(); ?>assets/css/beyond.min.css" rel="stylesheet" id="beyond-link" />
+  <link href="<?= CFG::Root(); ?>assets/css/beyond.min.css" rel="stylesheet"/>
   <link href="<?= CFG::Root(); ?>assets/css/demo.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/typicons.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/animate.min.css" rel="stylesheet" />

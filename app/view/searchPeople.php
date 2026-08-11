@@ -133,4 +133,4 @@
     </div>
   </div>
 </div>
-<script src="<?= CFG::Root(); ?>js/searchPeople.js<?php echo "?" . microtime(); ?>"></script>
+<script src="<?= CFG::Root(); ?>app/js/searchPeople.js<?php echo "?" . microtime(); ?>"></script>

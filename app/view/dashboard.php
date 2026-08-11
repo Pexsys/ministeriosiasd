@@ -1,54 +1,12 @@
 <?php
 @require_once("../rules/functions.php");
-verificaLogin();
+Session::Start();
+Session::LoginVerify();
 
 $result = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE id = ?", array($_SESSION['PESSOA']['id']));
 $pessoa = $result->fields;
 
 $GLOBALS["breadCrumb"] = "";
-
-function fMontaMenu($perfil)
-{
-  $retorno = array();
-  foreach ($perfil as $key => $value):
-    $opt = $value["opt"];
-    $ico = $value["ico"];
-    $url = $value["url"];
-
-    $urlEmpty = empty($url);
-    $class = "";
-    if ($value["active"]):
-      $class = " class=\"" . ($urlEmpty ? "open" : "active") . "\"";
-      if (!$urlEmpty):
-        $retorno = array("opt" => $opt, "url" => $url);
-      endif;
-    endif;
-    echo "<li$class>";
-    if (!$urlEmpty):
-      echo "<a href=\"" . CFG::Root() . "dashboard.php?id=$key\">";
-    else:
-      echo "<a href=\"#\" class=\"menu-dropdown\">";
-    endif;
-    if (!empty($ico)):
-      echo "<i class=\"$ico\"></i>";
-    endif;
-    echo "<span class=\"menu-text\">$opt</span>";
-    if (count($value["child"]) > 0):
-      echo "<i class=\"menu-expand\"></i>";
-    endif;
-    echo "</a>";
-    if (count($value["child"]) > 0):
-      echo "<ul class=\"submenu\" style=\"display: none;\">";
-      $ax = fMontaMenu($value["child"]);
-      if (count($retorno) == 0):
-        $retorno = $ax;
-      endif;
-      echo "</ul>";
-    endif;
-    echo "</li>";
-  endforeach;
-  return $retorno;
-}
 
 function fSetActive($perfil, $id = NULL)
 {
@@ -76,7 +34,7 @@ function fSetActive($perfil, $id = NULL)
   return $perfil;
 }
 
-$arvore = fGetPerfil();
+$arvore = Profile::Get();
 $perfil = fSetActive($arvore, fRequest("id"));
 ?>
 <!DOCTYPE html>
@@ -89,19 +47,19 @@ $perfil = fSetActive($arvore, fRequest("id"));
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <link rel="shortcut icon" href="<?= CFG::Root(); ?>img/logo.png" type="image/x-icon">
-  <link href="<?= CFG::Root(); ?>assets/css/bootstrap.min.css" rel="stylesheet" />
   <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
+  <link id="skin-link" href="" rel="stylesheet" type="text/css" />
+  <link href="<?= CFG::Root(); ?>assets/css/bootstrap.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/font-awesome.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/weather-icons.min.css" rel="stylesheet" />
   <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,600,700,300" rel="stylesheet" type="text/css">
   <link href='http://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
-  <link id="beyond-link" href="<?= CFG::Root(); ?>assets/css/beyond.min.css" rel="stylesheet" type="text/css" />
+  <link href="<?= CFG::Root(); ?>assets/css/beyond.min.css" rel="stylesheet" type="text/css" />
   <link href="<?= CFG::Root(); ?>assets/css/demo.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/typicons.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/animate.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/bootstrap-select.min.css" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/dataTables.bootstrap.css" rel="stylesheet" />
-  <link id="skin-link" href="" rel="stylesheet" type="text/css" />
   <script src="<?= CFG::Root(); ?>assets/js/jquery.min.js"></script>
   <script src="<?= CFG::Root(); ?>assets/js/skins.min.js"></script>
   <script src="<?= CFG::Root(); ?>assets/js/angular.min.js"></script>
@@ -111,11 +69,11 @@ $perfil = fSetActive($arvore, fRequest("id"));
   <script src="<?= CFG::Root(); ?>assets/js/formValidation/formValidation.min.js"></script>
   <script src="<?= CFG::Root(); ?>assets/js/formValidation/bootstrap.min.js"></script>
   <script src="<?= CFG::Root(); ?>assets/js/slimscroll/jquery.slimscroll.min.js"></script>
-  <script src="<?= CFG::Root(); ?>js/functions.lib.js?<?php echo microtime(); ?>"></script>
+  <script src="<?= CFG::Root(); ?>app/js/functions.lib.js?<?php echo microtime(); ?>"></script>
   <script>
     jsLIB.rootDir = '<?= CFG::Root(); ?>';
   </script>
-  <script src="<?= CFG::Root(); ?>js/dashboard.js?<?php echo microtime(); ?>"></script>
+  <script src="<?= CFG::Root(); ?>app/js/dashboard.js?<?php echo microtime(); ?>"></script>
 </head>
 <body>
   <div class="loading-container">
@@ -140,7 +98,7 @@ $perfil = fSetActive($arvore, fRequest("id"));
               <li>
                 <a class="login-area dropdown-toggle" data-toggle="dropdown">
                   <section>
-                    <h2><span class="profile"><span><?php echo ucwords(mb_strtolower(utf8_encode($pessoa['nm']))); ?></span></span></h2>
+                    <h2><span class="profile"><span><?php echo ucwords(mb_strtolower($pessoa['nm'])); ?></span></span></h2>
                   </section>
                 </a>
                 <ul class="pull-right dropdown-menu dropdown-arrow dropdown-login-area">
@@ -181,7 +139,7 @@ $perfil = fSetActive($arvore, fRequest("id"));
 						<i class="searchicon fa fa-search"></i>
 						<div class="searchhelper"></div>
 					</div> -->
-          <?php $activeOpt = fMontaMenu($perfil); ?>
+          <!-- <?php $activeOpt = Menu::Monta($perfil); ?> -->
         </ul>
       </div>
       <div class="page-content">

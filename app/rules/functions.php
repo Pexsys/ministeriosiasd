@@ -39,28 +39,6 @@ function dd($obj)
   exit;
 }
 
-function url_exists($url)
-{
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $url);
-  curl_setopt($ch, CURLOPT_NOBODY, true);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
-  curl_exec($ch);
-  $headers = curl_getinfo($ch);
-  curl_close($ch);
-  return (@$headers['http_code'] === 200);
-}
-
-function get_include_contents($filename)
-{
-  if (is_file($filename)) {
-    ob_start();
-    include $filename;
-    return ob_get_clean();
-  }
-  return '';
-}
-
 function objectToArray($d)
 {
   if (is_object($d)) {
@@ -87,73 +65,6 @@ function fRequest($pVar)
   if (isset($_GET[$pVar])) return $_GET[$pVar];
   if (isset($_POST[$pVar])) return $_POST[$pVar];
   return "";
-}
-
-function verificaLogin()
-{
-  session_start();
-  $temPerfil = isset($_SESSION['PESSOA']['ssid']);
-  if (!$temPerfil):
-    session_destroy();
-    header("Location: " . CFG::Root() . "index.php");
-    exit;
-  endif;
-}
-
-function fSetSessionLogin($result)
-{
-  session_start();
-  $_SESSION['PESSOA']['ssid'] = session_id();
-  $_SESSION['PESSOA']['email'] = $result->fields['email'];
-  $_SESSION['PESSOA']['id'] = $result->fields['id'];
-}
-
-function fGetPerfil($cd = NULL)
-{
-  $arr = array();
-  $query = "SELECT DISTINCT td.id, td.cd, td.icon, td.ds, td.url
-			  FROM CD_PERSON_PROFILE cpp
-		INNER JOIN TB_PROFILE_ITEM tpi ON (tpi.id_tb_profile = cpp.id_tb_profile)
-		INNER JOIN TB_DASHBOARD td ON  td.id = tpi.id_tb_dashboard)
-			 WHERE cpp.id_cd_person = ?";
-  if (isset($cd) && !empty($cd)):
-    $query .= " AND td.cd LIKE '$cd.%'";
-  else:
-    $query .= " AND LENGTH(td.cd) = 2";
-  endif;
-  $query .= " ORDER BY td.cd";
-  $result = CONN::get()->Execute($query, array($_SESSION['PESSOA']['id']));
-  while (!$result->EOF):
-    $child = fGetPerfil($result->fields['cd']);
-    $arr[$result->fields['id']] = array(
-      "opt"   => utf8_encode($result->fields['ds']),
-      "ico"   => $result->fields['icon'],
-      "url"   => $result->fields['url'],
-      "active" => false,
-      "child"  => $child
-    );
-    $result->MoveNext();
-  endwhile;
-  return $arr;
-}
-
-function fSetVerificaPerfil($id_cd_person)
-{
-  //VERIFICA SE TEM AO MENOS UM PERFIL, SE NAO INSERE PERFIL BASICO 0-GUEST.
-  $resperf = CONN::get()->Execute("SELECT * FROM CD_PERSON_PROFILE WHERE id_cd_person = ?", array($id_cd_person));
-  if ($resperf->EOF):
-    CONN::get()->Execute(
-      "
-			INSERT INTO CD_PERSON_PROFILE(
-				id_cd_person,
-				id_tb_profile
-			) VALUES (
-				?,
-				?
-			)",
-      array($id_cd_person, 0)
-    );
-  endif;
 }
 
 function array_msort($array, $cols)

@@ -1,6 +1,6 @@
 <?php
-@require_once("../include/functions.php");
-@require_once("../assets/tcpdf/tcpdf.php");
+@require_once('../rules/functions.php');
+Session::Start();
 
 class TESTEDONS extends TCPDF
 {

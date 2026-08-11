@@ -41,4 +41,4 @@
     </div>
   </div>
 </div>
-<script src="<?= CFG::Root(); ?>js/printTests.js<?php echo "?" . microtime(); ?>"></script>
+<script src="<?= CFG::Root(); ?>app/js/printTests.js<?php echo "?" . microtime(); ?>"></script>
