@@ -21,7 +21,7 @@ function getFilter($parameters)
 
   //DONS
   elseif ($type == "D"):
-    $domain = getDomain("CON_CD_DONS");
+    $domain = CONN::Domain("CD_GIFTS");
 
   //PONTUACAO DE DONS - DI-IGUAL, DA-MAIOR, DE-MENOR
   elseif ($type == "DI" || $type == "DA" || $type == "DE"):
@@ -32,7 +32,7 @@ function getFilter($parameters)
 
   //MINISTERIOS
   elseif ($type == "M"):
-    $domain = getDomain("CON_CD_MINISTRIES");
+    $domain = CONN::Domain("CD_MINISTRIES");
 
   //COMPROMISSO DE MINISTERIOS - CM
   elseif ($type == "CM"):

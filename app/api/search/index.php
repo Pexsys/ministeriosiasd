@@ -60,9 +60,9 @@ function getQueryByFilterGifts($parameters)
   if (!empty($where)):
     $query = "
 		SELECT hri.seq, cr.nm, cd.ds, cd.cd
-		FROM CON_RESULTADO cr
+		FROM HS_RESULTS cr
 		INNER JOIN HS_RESULT_ITEM hri ON (hri.id_hs_result = cr.id)
-		INNER JOIN CON_CD_DONS cd ON (cd.id = hri.id_source)  
+		INNER JOIN CD_GIFTS cd ON (cd.id = hri.id_source)  
 		WHERE cr.TP = ? $where
 		";
     return CONN::get()->Execute($query, $aWhere);
@@ -149,9 +149,9 @@ function getQueryByFilterMinisters($parameters)
   if (!empty($where)):
     $query = "
 		SELECT hri.seq, cr.nm, cm.ds, cm.cd
-		FROM CON_RESULTADO cr
+		FROM HS_RESULTS cr
 		INNER JOIN HS_RESULT_ITEM hri ON (hri.id_hs_result = cr.id)
-		INNER JOIN CON_CD_MINISTRIES cm ON (cm.id = hri.id_source)  
+		INNER JOIN CD_MINISTRIES cm ON (cm.id = hri.id_source)  
 		WHERE cr.TP = ? $where
 		";
     return CONN::get()->Execute($query, $aWhere);

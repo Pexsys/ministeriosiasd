@@ -76,12 +76,12 @@ function getQueryByFilter($parameters)
   $query = "
 	SELECT DISTINCT p.id, p.nm, p.email, crd.id AS id_rd, crm.id AS id_rm
 	FROM CD_PERSON p
-	LEFT JOIN CON_RESULTADO_LAST crd ON (crd.id_cd_person = p.id AND crd.tp = 'D')
+	LEFT JOIN CON_RESULT_LAST crd ON (crd.id_cd_person = p.id AND crd.tp = 'D')
 	LEFT JOIN HS_RESULT_ITEM hrid ON (hrid.id_hs_result = crd.id)
-	LEFT JOIN CON_CD_DONS cd ON (cd.id = hrid.id_source)  
-	LEFT JOIN CON_RESULTADO_LAST crm ON (crm.id_cd_person = p.id AND crm.tp = 'M')
+	LEFT JOIN CD_GIFTS cd ON (cd.id = hrid.id_source)  
+	LEFT JOIN CON_RESULT_LAST crm ON (crm.id_cd_person = p.id AND crm.tp = 'M')
 	LEFT JOIN HS_RESULT_ITEM hrim ON (hrim.id_hs_result = crm.id)
-	LEFT JOIN CON_CD_MINISTRIES cm ON (cm.id = hrim.id_source)
+	LEFT JOIN CD_MINISTRIES cm ON (cm.id = hrim.id_source)
 	WHERE 1=1 $where ORDER BY p.NM";
 
   //print_r($aWhere);

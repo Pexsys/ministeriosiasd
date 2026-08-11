@@ -202,10 +202,10 @@ function finalizarDonsPessoa($pessoaID)
     CONN::get()->Execute(
       "INSERT INTO HS_RESULT_ITEM ( id_hs_result, ds, seq, id_source, cd_source ) 
 			SELECT $id AS id_hs_result, res.ds, res.seq, res.id, res.cd
-			FROM (SELECT t.ds AS ds, t.id, t.cd, SUM(c.nr_peso) AS seq
+			FROM (SELECT t.ds AS ds, t.id, t.cd, SUM(c.factor) AS seq
 				FROM ASW_GIFTS r 
-			  INNER JOIN CON_QS_DONS q ON (r.id_qs_gifts = q.id)
-			  INNER JOIN CON_CD_DONS t ON (t.id = q.id_cd_dons)
+			  INNER JOIN ASW_GIFTS q ON (r.id_qs_gifts = q.id)
+			  INNER JOIN CD_GIFTS t ON (t.id = q.id_cd_dons)
 			  INNER JOIN CD_GIFTS_ASW c ON (r.cd_asw_gifts = c.id)
 			       WHERE r.id_cd_person = ?
 			    GROUP BY t.ds, t.id, t.cd) res",
@@ -268,7 +268,7 @@ function questoesMinisDirect($parameters)
 		m.ds,
 		r.grade
 	FROM ASW_MINISTRIES r
-	INNER JOIN CON_CD_MINISTRIES m ON (m.id = r.id_cd_ministries)
+	INNER JOIN CD_MINISTRIES m ON (m.id = r.id_cd_ministries)
 	WHERE (r.id_cd_person = ? OR r.id_cd_person IS NULL)
 	  AND r.grade > 0
 	ORDER BY m.ds
@@ -294,7 +294,7 @@ function getQstMiniCode($parameters)
 	SELECT
 		m.id,
 		m.ds
-	FROM CON_CD_MINISTRIES m
+	FROM CD_MINISTRIES m
 	WHERE m.cd = ?
 	", array($parameters['cd']));
   if (!$result->EOF):
@@ -338,9 +338,9 @@ function questoesMinisteriosPessoa($pessoaID)
 		m.ds,
 		m.ds_cd_ministerios_gp,
 		r.grade
-	FROM CON_CD_MINISTRIES m
+	FROM CD_MINISTRIES m
 	LEFT JOIN ASW_MINISTRIES r ON (r.id_cd_ministries = m.id AND (r.id_cd_person = ? OR r.id_cd_person IS NULL))
-	ORDER BY m.id_cd_ministries_gp, m.cd
+	ORDER BY m.id_ministries_grp, m.cd
 	", array($pessoaID));
   foreach ($result as $rsitem):
     ++$tabindex;
@@ -432,7 +432,7 @@ function finalizarMinisteriosPessoa($pessoaID)
       "INSERT INTO HS_RESULT_ITEM ( id_hs_result, ds, seq, id_source, cd_source ) 
 			SELECT $id AS id_hs_result, c.ds, m.grade, c.id, c.cd
 			FROM ASW_MINISTRIES m
-			INNER JOIN CON_CD_MINISTRIES c ON (c.id = m.id_cd_ministries)
+			INNER JOIN CD_MINISTRIES c ON (c.id = m.id_cd_ministries)
 			WHERE m.grade IS NOT NULL
 			  AND m.id_cd_person = ?",
       array($pessoaID)

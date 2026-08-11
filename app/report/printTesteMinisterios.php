@@ -201,7 +201,7 @@ class TESTEMIN extends TCPDF
 }
 
 $pdf = new TESTEMIN();
-$result = CONN::get()->Execute("SELECT * FROM CON_CD_MINISTRIES ORDER BY id_cd_ministries_gp, cd");
+$result = CONN::get()->Execute("SELECT * FROM CD_MINISTRIES ORDER BY id_ministries_grp, cd");
 
 $pdf->setResult($result->fields);
 $pdf->newPage();

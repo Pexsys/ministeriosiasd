@@ -41,7 +41,7 @@ class Testes
 
     $qtds = CONN::get()->Execute("
 	    SELECT 
-	    (SELECT COUNT(*) FROM CON_CD_MINISTRIES) AS nr_qst, 
+	    (SELECT COUNT(*) FROM CD_MINISTRIES) AS nr_qst, 
 	    (SELECT COUNT(*) FROM ASW_MINISTRIES WHERE id_cd_person = ?) AS nr_rsp
 	", array($id));
     if (!$qtds->EOF):
