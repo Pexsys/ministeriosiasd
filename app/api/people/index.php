@@ -76,10 +76,10 @@ function getQueryByFilter($parameters)
   $query = "
 	SELECT DISTINCT p.id, p.nm, p.email, crd.id AS id_rd, crm.id AS id_rm
 	FROM CD_PERSON p
-	LEFT JOIN CON_RESULT_LAST crd ON (crd.id_cd_person = p.id AND crd.tp = 'D')
+	LEFT JOIN CON_RESULT_LAST crd ON (crd.cd_person = p.id AND crd.tp = 'D')
 	LEFT JOIN HS_RESULT_ITEM hrid ON (hrid.id_hs_result = crd.id)
 	LEFT JOIN CD_GIFTS cd ON (cd.id = hrid.id_source)  
-	LEFT JOIN CON_RESULT_LAST crm ON (crm.id_cd_person = p.id AND crm.tp = 'M')
+	LEFT JOIN CON_RESULT_LAST crm ON (crm.cd_person = p.id AND crm.tp = 'M')
 	LEFT JOIN HS_RESULT_ITEM hrim ON (hrim.id_hs_result = crm.id)
 	LEFT JOIN CD_MINISTRIES cm ON (cm.id = hrim.id_source)
 	WHERE 1=1 $where ORDER BY p.NM";
@@ -93,15 +93,13 @@ function getPeople($parameters)
 {
   $arr = array();
   $result = getQueryByFilter($parameters);
-  foreach ($result as $k => $fields):
-    $arr[] = array(
-      "id" => $fields["id"],
-      "nm" => utf8_encode($fields["nm"]),
-      "em" => $fields["email"],
-      "rd" => $fields["id_rd"],
-      "rm" => $fields["id_rm"]
-    );
-  endforeach;
+  foreach ($result as $k => $fields) $arr[] = array(
+    "id" => $fields["id"],
+    "nm" => $fields["nm"],
+    "em" => $fields["email"],
+    "rd" => $fields["id_rd"],
+    "rm" => $fields["id_rm"]
+  );
   return array("result" => true, "people" => $arr);
 }
 
@@ -152,11 +150,10 @@ function getMember($parameters)
   $result = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE id = ?", array($parameters["id"]));
   if (!$result->EOF):
     $arr["result"] = true;
-
     $arr["membro"] = array(
-      "cd_pessoa-id"    => $result->fields['id'],
-      "cd_pessoa-nm"    => utf8_encode(trim($result->fields['nm'])),
-      "cd_pessoa-email"  => trim($result->fields['email'])
+      "cd_pessoa-id" => $result->fields['id'],
+      "cd_pessoa-nm" => trim($result->fields['nm']),
+      "cd_pessoa-email" => trim($result->fields['email'])
     );
   endif;
   $arr["testes"] = Testes::VerificaTestes($parameters["id"]);

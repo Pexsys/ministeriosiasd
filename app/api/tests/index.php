@@ -9,15 +9,13 @@ responseMethod();
 function getDetailGift($parameters)
 {
   $arr = array();
-  $result = CONN::get()->Execute("SELECT * FROM CD_DONS WHERE id = ? ", array($parameters["id"]));
-  foreach ($result as $rsitem):
-    $arr = array(
-      "ds" => utf8_encode($rsitem['ds']),
-      "ds_explain" => utf8_encode($rsitem['ds_explain']),
-      "ds_ref_biblica" => utf8_encode($rsitem['ds_ref_biblica']),
-      "ds_tarefas" => utf8_encode($rsitem['ds_tarefas'])
-    );
-  endforeach;
+  $result = CONN::get()->Execute("SELECT * FROM CD_GIFTS WHERE id = ? ", array($parameters["id"]));
+  foreach ($result as $rsitem) $arr = array(
+    "ds" =>  $rsitem['ds'],
+    "ex" =>  $rsitem['detail'],
+    "rf" =>  $rsitem['refer'],
+    "tk" =>  $rsitem['tasks']
+  );
   return array("return" => true, "result" => $arr);
 }
 
@@ -37,7 +35,7 @@ function questoesDonsDirect($parameters)
 		r.cd_asw_gifts,
 		o.seq AS seq_resp
 	FROM CD_GIFTS_SVY cgs
-	LEFT JOIN ASW_GIFTS r ON (r.id_qs_gifts = cgs.id AND (r.id_cd_person = ? OR r.id_cd_person IS NULL))
+	LEFT JOIN ASW_GIFTS r ON (r.gifts_svy = cgs.cd_gifts AND (r.cd_person = ? OR r.cd_person IS NULL))
 	LEFT JOIN CD_GIFTS_ASW o ON (o.id = r.cd_asw_gifts)
 	ORDER BY q.seq", array($parameters['id']));
   foreach ($result as $k => $f):
@@ -61,12 +59,12 @@ function questoesDonsDirect($parameters)
 				WHERE cd = ?
 				ORDER BY seq", array($cd));
       foreach ($resposta as $j => $r):
-        $optionsResposta .= (empty($optionsResposta) ? "" : ", ") . $r['seq'] . "=" . utf8_encode(ucfirst($r['ds']));
+        $optionsResposta .= (empty($optionsResposta) ? "" : ", ") . $r['seq'] . "=" . ucfirst($r['ds']);
       endforeach;
       $texto .= "<h6 class=\"row-title before-orange\">" .
         (is_null($f['prefix'])
-          ? "$optionsResposta <b>" . utf8_encode(substr($f['ds'], 0, 18)) . "...</b>"
-          : "<b>" . utf8_encode($f['prefix']) . "...</b> $optionsResposta") .
+          ? "$optionsResposta <b>" . substr($f['ds'], 0, 18) . "...</b>"
+          : "<b>" . $f['prefix'] . "...</b> $optionsResposta") .
         "</h6><div class=\"row\">";
     endif;
 
@@ -77,9 +75,8 @@ function questoesDonsDirect($parameters)
   return array("result" => Testes::RetornaTesteDonsQuantidades($parameters['id']), "questoes" => $texto);
 }
 
-function questoesDons()
+function questoesDons($parameters)
 {
-  session_start();
   $arr = array();
   $optionsResposta = "";
   $cd_ant = "";
@@ -91,15 +88,15 @@ function questoesDons()
 		cgs.seq,
 		cgs.prefix,
 		cgs.ds,
-		cgs.cd,
+	  cgs.cd_gifts_asw,
 		r.cd_asw_gifts
 	FROM CD_GIFTS_SVY cgs
-	LEFT JOIN ASW_GIFTS r ON (r.id_qs_gifts = cgs.id AND (r.id_cd_person = ? OR r.id_cd_person IS NULL))
-	ORDER BY q.seq", array($_SESSION['PESSOA']['id']));
+	LEFT JOIN ASW_GIFTS r ON (r.gifts_svy = cgs.id AND r.cd_person = ?)
+	ORDER BY cgs.seq", array($_SESSION['PESSOA']['id']));
   foreach ($result as $key => $fields):
     ++$tabindex;
     $id = $fields['id'];
-    $cd = $fields['cd'];
+    $cd = $fields['cd_gifts_asw'];
     $cd_asw_gifts = $fields['cd_asw_gifts'];
     $classField = isset($cd_asw_gifts) ? "has-success" : "has-error";
 
@@ -107,30 +104,19 @@ function questoesDons()
     if ($cd_ant != $cd):
       $cd_ant = $cd;
       $optionsResposta = "<option></option>";
-      $resposta = CONN::get()->Execute("
-			SELECT id, ds
-			  FROM CD_GIFTS_ASW
-			 WHERE cd = ?
-			ORDER BY seq", array($cd));
-      foreach ($resposta as $key => $value):
-        $optionsResposta .= "<option value=\"" . $value['id'] . "\">" . utf8_encode($value['ds']) . "</option>";
-      endforeach;
+      $resposta = CONN::get()->Execute("SELECT id, ds FROM CD_GIFTS_ASW WHERE cd = ? ORDER BY seq", array($cd));
+      foreach ($resposta as $key => $value) $optionsResposta .= "<option value=\"" . $value['id'] . "\">" . $value['ds'] . "</option>";
     endif;
 
-    if (isset($cd_asw_gifts)):
-      $cmb_resposta_base .= str_replace("<option value=\"$cd_asw_gifts\">", "<option value=\"$cd_asw_gifts\" selected>", $optionsResposta);
-    else:
-      $cmb_resposta_base .= $optionsResposta;
-    endif;
+    if (isset($cd_asw_gifts)) $cmb_resposta_base .= str_replace("<option value=\"$cd_asw_gifts\">", "<option value=\"$cd_asw_gifts\" selected>", $optionsResposta);
+    else $cmb_resposta_base .= $optionsResposta;
     $cmb_resposta_base .= "</select>";
 
     $texto = "<div class=\"form-group $classField\">";
-    $texto .= utf8_encode($fields['prefix']) . "&nbsp;$cmb_resposta_base&nbsp;" . utf8_encode($fields['ds']);
+    $texto .= $fields['prefix'] . "&nbsp;$cmb_resposta_base&nbsp;" . $fields['ds'];
     $texto .= "</div>";
 
-    $arr[] = array(
-      "ds_qst" => $texto
-    );
+    $arr[] = array("ds_qst" => $texto);
   endforeach;
   return array("result" => Testes::RetornaTesteDonsQuantidades($_SESSION['PESSOA']['id']), "questoes" => $arr);
 }
@@ -148,84 +134,25 @@ function setRsDonsDirect($parameters)
 		  AND o.seq = ?
 	", array($qsID, $col));
 
-  return setRsDonsPessoa($parameters["id"], $qsID, $rs->fields["id"]);
+  return Testes::SetRsDonsPessoa($parameters["id"], $qsID, $rs->fields["id"]);
 }
 
 function setRsDons($parameters)
 {
-  session_start();
-  return setRsDonsPessoa($_SESSION['PESSOA']['id'], $parameters["id_qs"], $parameters["id_rs"]);
-}
-
-function setRsDonsPessoa($pessoaID, $qsID, $rsID)
-{
-  //SE RESPOSTA PREENCHIDA
-  if (isset($rsID) && !empty($rsID)):
-    $result = CONN::get()->Execute("SELECT * FROM ASW_GIFTS WHERE id_qs_gifts = ? AND id_cd_person = ?", array($qsID, $pessoaID));
-    if ($result->EOF):
-      CONN::get()->Execute("INSERT INTO ASW_GIFTS (id_cd_person, id_qs_gifts, cd_asw_gifts) VALUES (?,?,?)", array($pessoaID, $qsID, $rsID));
-    else:
-      CONN::get()->Execute("UPDATE ASW_GIFTS SET cd_asw_gifts = ? WHERE id_qs_gifts = ? AND id_cd_person = ?", array($rsID, $qsID, $pessoaID));
-    endif;
-
-  //SE RESPOSTA EM BRANCO
-  else:
-    CONN::get()->Execute("DELETE FROM ASW_GIFTS WHERE id_qs_gifts = ? AND id_cd_person = ?", array($qsID, $pessoaID));
-  endif;
-  return array("return" => true, "result" => Testes::RetornaTesteDonsQuantidades($pessoaID));
-}
-
-
-function finalizarDonsPessoa($pessoaID)
-{
-  $donsPend = Testes::RetornaTesteDonsQuantidades($pessoaID);
-
-  //SE EXISTE TESTE DE DONS PENDENTE
-  if ($donsPend["nr_rsp"] == $donsPend["nr_qst"]):
-
-    //RECUPERAR REGRA DA DATA DE VALIDADE DO TESTE DE DONS.
-    $dhConclusao = date('Y-m-d H:i:s');
-    $dhFimValidade = Testes::CalculaValidade("TESTE_DONS", $dhConclusao);
-
-    //INSERE CAPA DO TESTE
-    CONN::get()->Execute(
-      "INSERT INTO HS_RESULTS ( id_cd_person, dh_conclusion, dh_fin_valid, tp ) VALUES ( ?, ?, ?, ? )",
-      array($pessoaID, $dhConclusao,  $dhFimValidade, 'D')
-    );
-
-    $id = CONN::get()->Insert_ID();
-
-    //INSERE ITENS DO TESTE	
-    CONN::get()->Execute(
-      "INSERT INTO HS_RESULT_ITEM ( id_hs_result, ds, seq, id_source, cd_source ) 
-			SELECT $id AS id_hs_result, res.ds, res.seq, res.id, res.cd
-			FROM (SELECT t.ds AS ds, t.id, t.cd, SUM(c.factor) AS seq
-				FROM ASW_GIFTS r 
-			  INNER JOIN ASW_GIFTS q ON (r.id_qs_gifts = q.id)
-			  INNER JOIN CD_GIFTS t ON (t.id = q.id_cd_dons)
-			  INNER JOIN CD_GIFTS_ASW c ON (r.cd_asw_gifts = c.id)
-			       WHERE r.id_cd_person = ?
-			    GROUP BY t.ds, t.id, t.cd) res",
-      array($pessoaID)
-    );
-
-    //APAGA RESPOSTAS	
-    CONN::get()->Execute("DELETE FROM ASW_GIFTS WHERE id_cd_person = ?", $pessoaID);
-  endif;
+  return Testes::SetRsDonsPessoa($_SESSION['PESSOA']['id'], $parameters["id_qs"], $parameters["id_rs"]);
 }
 
 function finalizarDonsDirect($parameters)
 {
-  finalizarDonsPessoa($parameters['id']);
+  return Testes::FinalizarDonsPessoa($parameters['id']);
 }
 
-function finalizarDons()
+function finalizarDons($parameters)
 {
-  session_start();
-  finalizarDonsPessoa($_SESSION['PESSOA']['id']);
+  return Testes::FinalizarDonsPessoa($_SESSION['PESSOA']['id']);
 }
 
-function optionsMinisteriosCompromisso()
+function optionsMinisteriosCompromisso($parameters)
 {
   $options = "<option value=\"\"></option>";
   $options .= "<option value=\"10\">Sim</option>";
@@ -234,29 +161,21 @@ function optionsMinisteriosCompromisso()
   return $options;
 }
 
-function optionsMinisteriosNota()
-{
-  $options = "<option value=\"\"></option>";
-  for ($i = 1; $i <= 10; $i++):
-    $options .= "<option value=\"$i\">$i</option>";
-  endfor;
-  return $options;
-}
-
 function questoesMinisDirect($parameters)
 {
   $tabindex = 0;
   $or = "<div class=\"panel-body\">";
   $or .= "<table class=\"table table-striped table-responsive\">
-  		<thead><tr>
-		      <th>Código</th>
-		      <th>Descrição</th>
-		      <th>Nota</th>
-		    </tr>
-		  </thead>
+  	<thead>
+      <tr>
+		    <th>Código</th>
+		    <th>Descrição</th>
+		    <th>Nota</th>
+		  </tr>
+		</thead>
 	<tbody>";
 
-  $options = optionsMinisteriosNota();
+  $options = Testes::OptionsMinisteriosNota();
 
   $result = CONN::get()->Execute("
 	SELECT
@@ -266,7 +185,7 @@ function questoesMinisDirect($parameters)
 		r.grade
 	FROM ASW_MINISTRIES r
 	INNER JOIN CD_MINISTRIES m ON (m.id = r.id_cd_ministries)
-	WHERE (r.id_cd_person = ? OR r.id_cd_person IS NULL)
+	WHERE (r.cd_person = ? OR r.cd_person IS NULL)
 	  AND r.grade > 0
 	ORDER BY m.ds
 	", array($parameters['id']));
@@ -274,11 +193,9 @@ function questoesMinisDirect($parameters)
   foreach ($result as $rsitem):
     $grade = $rsitem['grade'];
     $opt = str_replace("<option value=\"$grade\">", "<option value=\"$grade\" selected>", $options);
-
-    $or .= templateMinisteriosDirect($rsitem['id'], $rsitem['cd'], utf8_encode($rsitem['ds']), ++$tabindex, $opt);
+    $or .= Testes::TemplateMinisteriosDirect($rsitem['id'], $rsitem['cd'], $rsitem['ds'], ++$tabindex, $opt);
   endforeach;
-  $or .= templateMinisteriosDirect("", "", "", 1, $options);
-
+  $or .= Testes::TemplateMinisteriosDirect("", "", "", 1, $options);
   $or .= "</tbody></table></div>";
 
   return array("result" => Testes::RetornaTesteMinisteriosQuantidades($parameters['id']), "questoes" => $or);
@@ -286,156 +203,44 @@ function questoesMinisDirect($parameters)
 
 function getQstMiniCode($parameters)
 {
-  $arr = array();
-  $result = CONN::get()->Execute("
-	SELECT
-		m.id,
-		m.ds
-	FROM CD_MINISTRIES m
-	WHERE m.cd = ?
-	", array($parameters['cd']));
-  if (!$result->EOF):
-    return array(
-      "return" => true,
-      "result" => array(
-        "id" => $result->fields['id'],
-        "ds" => utf8_encode($result->fields['ds'])
-      )
-    );
-  endif;
+  $result = CONN::get()->Execute("SELECT m.id, m.ds FROM CD_MINISTRIES m WHERE m.cd = ?", array($parameters['cd']));
+  if (!$result->EOF) return array(
+    "return" => true,
+    "result" => array(
+      "id" => $result->fields['id'],
+      "ds" => $result->fields['ds']
+    )
+  );
   return array("return" => false);
 }
 
-function templateMinisteriosDirect($id, $cd, $ds, $i, $opt)
+function questoesMinisterios($parameters)
 {
-  return "<tr>
-		<td class=\"col-lg-1 col-sm-2 col-xs-3\"><input type=\"text\" name=\"cdQuestao\" value=\"$cd\" class=\"form-control input-sm\" placeholder=\"Código\"/></td>
-		<td class=\"col-lg-10 col-sm-8 col-xs-6\"><span name=\"lblQuestao\">$ds</span></td>
-		<td class=\"col-lg-1 col-sm-2 col-xs-3\"><select class=\"form-control input-sm\" name=\"questao\" id-questao=\"$id\" tabindex=\"$i\">$opt</select></td>
-	</tr>";
-}
-
-function questoesMinisterios()
-{
-  session_start();
-  return questoesMinisteriosPessoa($_SESSION['PESSOA']['id']);
-}
-
-function questoesMinisteriosPessoa($pessoaID)
-{
-  $arr = array();
-  $tabindex = 0;
-
-  $options = optionsMinisteriosNota();
-
-  $result = CONN::get()->Execute("
-	SELECT
-		m.id,
-		m.cd,
-		m.ds,
-		m.ds_cd_ministerios_gp,
-		r.grade
-	FROM CD_MINISTRIES m
-	LEFT JOIN ASW_MINISTRIES r ON (r.id_cd_ministries = m.id AND (r.id_cd_person = ? OR r.id_cd_person IS NULL))
-	ORDER BY m.id_ministries_grp, m.cd
-	", array($pessoaID));
-  foreach ($result as $rsitem):
-    ++$tabindex;
-
-    $id = $rsitem['id'];
-    $grade = $rsitem['grade'];
-    $cd = $rsitem['cd'];
-    $ds = utf8_encode($rsitem['ds']);
-    $da = utf8_encode($rsitem['ds_cd_ministerios_gp']);
-
-    $opt = str_replace("<option value=\"$grade\">", "<option value=\"$grade\" selected>", $options);
-    $arr[] = array(
-      "da" => $da,
-      "cd" => $cd,
-      "ds" => "<div>$ds&nbsp;<select class=\"input-sm pull-right\" name=\"questao\" id-questao=\"$id\" tabindex=\"$tabindex\">$opt</select></div>"
-    );
-  endforeach;
-  return array("result" => Testes::RetornaTesteMinisteriosQuantidades($pessoaID), "questoes" => $arr);
+  return Testes::QuestoesMinisteriosPessoa($_SESSION['PESSOA']['id']);
 }
 
 function setRsMinisteriosDirect($parameters)
 {
-  setRsMinisteriosPessoa($parameters["id_pessoa"], $parameters["id_qs"], $parameters["grade"]);
+  Testes::SetRsMinisteriosPessoa($parameters["id_pessoa"], $parameters["id_qs"], $parameters["grade"]);
 
   $options = "<option value=\"\"></option>";
   for ($i = 1; $i <= 10; $i++):
     $options .= "<option value=\"$i\">$i</option>";
   endfor;
-  return array("return" => true, "result" => templateMinisteriosDirect("", "", "", 1, $options));
+  return array("return" => true, "result" => Testes::TemplateMinisteriosDirect("", "", "", 1, $options));
 }
 
 function setRsMinisterios($parameters)
 {
-  session_start();
-  return setRsMinisteriosPessoa($_SESSION['PESSOA']['id'], $parameters["id_qs"], $parameters["grade"]);
-}
-
-function setRsMinisteriosPessoa($pessoaID, $id, $nt)
-{
-  //SE RESPOSTA PREENCHIDA
-  if (isset($nt) && !empty($nt)):
-    $result = CONN::get()->Execute("SELECT * FROM ASW_MINISTRIES WHERE id_cd_ministries = ? AND id_cd_person = ?", array($id, $pessoaID));
-    if ($result->EOF):
-      CONN::get()->Execute("DELETE FROM ASW_MINISTRIES WHERE grade IS NULL AND id_cd_person = ?", array($pessoaID));
-      CONN::get()->Execute("INSERT INTO ASW_MINISTRIES (id_cd_person, id_cd_ministries, grade) VALUES (?,?,?)", array($pessoaID, $id, $nt));
-    else:
-      CONN::get()->Execute("UPDATE ASW_MINISTRIES SET grade = ? WHERE id_cd_ministries = ? AND id_cd_person = ?", array($nt, $id, $pessoaID));
-    endif;
-
-  //SE RESPOSTA EM BRANCO
-  else:
-    CONN::get()->Execute("DELETE FROM ASW_MINISTRIES WHERE id_cd_ministries = ? AND id_cd_person = ?", array($id, $pessoaID));
-  endif;
-  return array("return" => true, "result" => Testes::RetornaTesteMinisteriosQuantidades($pessoaID));
+  return Testes::SetRsMinisteriosPessoa($_SESSION['PESSOA']['id'], $parameters["id_qs"], $parameters["grade"]);
 }
 
 function finalizarMiniDirect($parameters)
 {
-  finalizarMinisteriosPessoa($parameters['id']);
+  return Testes::FinalizarMinisteriosPessoa($parameters['id']);
 }
 
-function finalizarMinisterios()
+function finalizarMinisterios($parameters)
 {
-  session_start();
-  finalizarMinisteriosPessoa($_SESSION['PESSOA']['id']);
-}
-
-function finalizarMinisteriosPessoa($pessoaID)
-{
-  $donsPend = Testes::RetornaTesteMinisteriosQuantidades($pessoaID);
-
-  //SE EXISTE RESPOSTAS DE MINISTERIOS
-  if ($donsPend["nr_rsp"] > 0):
-
-    //RECUPERAR REGRA DA DATA DE VALIDADE DO TESTE DE DONS.
-    $dhConclusao = date('Y-m-d H:i:s');
-    $dhFimValidade = Testes::CalculaValidade("TESTE_MINISTERIOS", $dhConclusao);
-
-    //INSERE CAPA DO TESTE
-    CONN::get()->Execute(
-      "INSERT INTO HS_RESULTS ( id_cd_person, dh_conclusion, dh_fin_valid, tp ) VALUES ( ?, ?, ?, ? )",
-      array($pessoaID, $dhConclusao,  $dhFimValidade, 'M')
-    );
-
-    $id = CONN::get()->Insert_ID();
-
-    //INSERE ITENS DO TESTE	
-    CONN::get()->Execute(
-      "INSERT INTO HS_RESULT_ITEM ( id_hs_result, ds, seq, id_source, cd_source ) 
-			SELECT $id AS id_hs_result, c.ds, m.grade, c.id, c.cd
-			FROM ASW_MINISTRIES m
-			INNER JOIN CD_MINISTRIES c ON (c.id = m.id_cd_ministries)
-			WHERE m.grade IS NOT NULL
-			  AND m.id_cd_person = ?",
-      array($pessoaID)
-    );
-
-    //APAGA RESPOSTAS	
-    CONN::get()->Execute("DELETE FROM ASW_MINISTRIES WHERE id_cd_person = ?", $pessoaID);
-  endif;
+  return Testes::FinalizarMinisteriosPessoa($_SESSION['PESSOA']['id']);
 }

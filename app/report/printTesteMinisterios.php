@@ -11,6 +11,7 @@ class TESTEMIN extends TCPDF
   private $posY;
   private $lineAlt;
   private $params;
+  private $stLine3;
   public $grupoAtual;
 
   function __construct()
@@ -43,11 +44,6 @@ class TESTEMIN extends TCPDF
     $this->setImageScale(PDF_IMAGE_SCALE_RATIO);
   }
 
-  private function legendaResultado($nota)
-  {
-    return Testes::LegendaDisposicao($nota);
-  }
-
   public function setResult($fields)
   {
     $this->params = $fields;
@@ -63,7 +59,7 @@ class TESTEMIN extends TCPDF
     $this->SetFont(PDF_FONT_NAME_MAIN, 'N', 6);
     //Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M')
     $this->SetX(5);
-    $this->Cell(40, 3, "Teste de Ministérios - Versão: " . strftime("%d/%m/%Y", strtotime($this->params["dt_ini_valid"])), 0, false, 'L');
+    $this->Cell(40, 3, "Teste de Ministérios - Versão: " . Conversion::StrToDate($this->params["dt_ini_valid"], "d/m/Y"), 0, false, 'L');
     $this->SetX(46);
     $this->Cell(125, 3, "pexsys.info", 0, false, 'C');
     $this->SetX(172);
@@ -72,7 +68,7 @@ class TESTEMIN extends TCPDF
 
   public function headerFirstPage()
   {
-    $this->Image("logo.jpg", 5, 5, 38, 20, 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+    $this->Image("../../img/logo.png", 5, 5, 38, 20, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
     $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 18);
     $this->SetFillColor(50, 50, 50);
     $this->SetTextColor(255, 255, 255);
@@ -89,7 +85,7 @@ class TESTEMIN extends TCPDF
     $this->SetFillColor(255, 255, 255);
     $this->SetTextColor(0, 0, 0);
     $this->setXY(45, $this->posY);
-    $this->Cell(160, 7, utf8_encode($this->params["nm"]), 'TLR', 1, 'C', 1, '', 0, false, 'T', 'C');
+    $this->Cell(160, 7, $this->params["nm"], 'TLR', 1, 'C', 1, '', 0, false, 'T', 'C');
 
     $this->posY += 7;
     $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 9);
@@ -107,7 +103,7 @@ class TESTEMIN extends TCPDF
     $this->Cell(125, 7, "", 'TL', 1, 'C', 1, '', 0, false, 'T', 'C');
     $this->SetFillColor(255, 255, 255);
     $this->setXY(170, $this->posY);
-    $this->Cell(35, 8, strftime("%d/%m/%Y", strtotime($this->params["dt_ini_valid"])), 'TL', 1, 'C', 1, '', 0, false, 'T', 'C');
+    $this->Cell(35, 8, Conversion::StrToDate($this->params["dt_ini_valid"], "d/m/Y"), 'TL', 1, 'C', 1, '', 0, false, 'T', 'C');
     $this->RoundedRect(45, $this->posY, 160, 8, 1, '0110', 'D', $this->stLine);
     $this->posY += 10;
   }
@@ -132,7 +128,7 @@ class TESTEMIN extends TCPDF
     $this->SetLineStyle($this->stLine2);
     $this->setCellPaddings(1, 0, 1, 0);
     $this->setXY(5, $this->posY);
-    $this->Cell(185, 9, mb_strtoupper(utf8_encode($f["ds_cd_ministerios_gp"]), "UTF-8"), 'TB', false, 'C', true, false);
+    $this->Cell(185, 9, mb_strtoupper($f["ds_cd_ministerios_gp"], "UTF-8"), 'TB', false, 'C', true, false);
     $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 8);
     // $this->setXY(160, $this->posY);
     // $this->Cell(15, 9, "SIM", 'TBL', false, 'C', true, false);
@@ -170,7 +166,7 @@ class TESTEMIN extends TCPDF
     $this->setXY(5, $this->posY);
     $this->Cell(15, 7, $f["cd"], 0, false, 'C', true, false, 1);
     $this->setX(20);
-    $this->Cell(170, 7, utf8_encode($f["ds"]), 0, false, 'L', true, false, 1);
+    $this->Cell(170, 7, $f["ds"], 0, false, 'L', true, false, 1);
     $this->SetFillColor(230, 230, 230);
     // $this->setX(160);
     // $this->Cell(15, 7, "", 'TBL', false, 'C', true);
@@ -196,7 +192,7 @@ class TESTEMIN extends TCPDF
   {
     $option = !isset($option) || empty($option) ? "D" : $option;
     $this->lastPage();
-    $this->Output("TesteMinisterios_" . date('Y-m-d_H:i:s') . ".pdf", $option);
+    $this->Output("TesteMinisterios_" . Formatter::DateTimeNow('Y-m-d_H:i:s') . ".pdf", $option);
   }
 }
 
@@ -219,4 +215,3 @@ foreach ($result as $ra => $f):
 endforeach;
 
 $pdf->download(fRequest("option"));
-exit;

@@ -3,10 +3,10 @@
 Session::Start();
 class RESULTS extends TCPDF
 {
-
   //lines styles
   private $stLine;
   private $stLine2;
+  private $stLine3;
   private $posY;
   private $lineAlt;
   private $params;
@@ -70,7 +70,7 @@ class RESULTS extends TCPDF
     $this->SetFont(PDF_FONT_NAME_MAIN, 'N', 6);
     //Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M')
     $this->SetX(5);
-    $this->Cell(40, 3, date("d/m/Y H:i:s"), 0, false, 'L');
+    $this->Cell(40, 3, Formatter::DateTimeNow("d/m/Y H:i:s"), 0, false, 'L');
     $this->SetX(46);
     $this->Cell(125, 3, "pexsys.info", 0, false, 'C');
     $this->SetX(172);
@@ -81,7 +81,7 @@ class RESULTS extends TCPDF
   {
     $this->setCellPaddings(0, 0, 0, 0);
     $this->setXY(0, 0);
-    $this->Image("logo.jpg", 5, 5, 38, 20, 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+    $this->Image("../../img/logo.png", 5, 5, 38, 20, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
 
     $this->posY = 5;
     $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 18);
@@ -102,9 +102,9 @@ class RESULTS extends TCPDF
     $this->SetFillColor(255, 255, 255);
     $this->SetTextColor(0, 0, 0);
     $this->setXY(45, $this->posY);
-    $this->Cell(125, 7, utf8_encode($this->params["nm"]), 'TL', 1, 'C', 1, '', 0, false, 'T', 'C');
+    $this->Cell(125, 7, $this->params["nm"], 'TL', 1, 'C', 1, '', 0, false, 'T', 'C');
     $this->setXY(170, $this->posY);
-    $this->Cell(35, 7, strftime("%d/%m/%Y %H:%M", strtotime($this->params["dh_conclusion"])), 'TLR', 1, 'C', 1, '', 0, false, 'T', 'C');
+    $this->Cell(35, 7, Conversion::StrToDate($this->params["dh_conclusion"], "d/m/Y H:i"), 'TLR', 1, 'C', 1, '', 0, false, 'T', 'C');
 
     $this->posY += 7;
     $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 9);
@@ -121,7 +121,7 @@ class RESULTS extends TCPDF
     $this->setXY(45, $this->posY);
     $this->Cell(125, 7, $this->params["email"], 'TL', 1, 'C', 1, '', 0, false, 'T', 'C');
     $this->setXY(170, $this->posY);
-    $this->Cell(35, 7, is_null($this->params["dh_fin_valid"]) ? "" : strftime("%d/%m/%Y %H:%M", strtotime($this->params["dh_fin_valid"])), 'TLR', 1, 'C', 1, '', 0, false, 'T', 'C');
+    $this->Cell(35, 7, is_null($this->params["dh_fin_valid"]) ? "" : Conversion::StrToDate($this->params["dh_fin_valid"], "d/m/Y H:i"), 'TLR', 1, 'C', 1, '', 0, false, 'T', 'C');
     $this->SetFillColor(255, 255, 255);
     $this->RoundedRect(45, $this->posY, 125, 8, 1, '0010', 'D', $this->stLine2);
     $this->RoundedRect(170, $this->posY, 35, 8, 1, '0100', 'D', $this->stLine2);
@@ -162,7 +162,7 @@ class RESULTS extends TCPDF
     $this->setX(25);
     $this->Cell(20, 7, $f["cd_source"], 0, false, 'C', true, false, 1);
     $this->setX(45);
-    $this->Cell(135, 7, utf8_encode($f["ds"]), 0, false, 'L', true, false, 1);
+    $this->Cell(135, 7, $f["ds"], 0, false, 'L', true, false, 1);
     $this->setX(180);
     $this->Cell(25, 7, $this->legendaResultado($f["seq"]), 0, false, 'C', true, false, 1);
     $this->posY += 7;
@@ -180,7 +180,7 @@ class RESULTS extends TCPDF
   public function download()
   {
     $this->lastPage();
-    $this->Output("ListagemResultado_" . date('Y-m-d_H:i:s') . ".pdf", "I");
+    $this->Output("ListagemResultado_" . Formatter::DateTimeNow('Y-m-d_H:i:s') . ".pdf", "I");
   }
 }
 
@@ -210,4 +210,3 @@ foreach ($result as $ra => $f):
 endforeach;
 
 $pdf->download();
-exit;

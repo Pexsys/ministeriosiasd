@@ -1,5 +1,21 @@
 $(document).ready(function () {
 
+  const mapQuestao = () => {
+    $("[name=questao]").change(function (e) {
+      var value = $(this).val();
+      jsLIB.ajax({
+        url: `${jsLIB.rootDir}app/api/tests/`,
+        data: { MethodName: 'setRsMinisterios', data: { id_qs: $(this).attr('id-questao'), grade: value } },
+        success: function (data, jqxhr) {
+          if (data.return == true) {
+            e.preventDefault();
+          }
+        }
+      });
+    });
+  };
+
+
   let groupColumn = 0;
   $('#simpledatatable')
     .on('init.dt', function () {
@@ -16,7 +32,7 @@ $(document).ready(function () {
       language: {
         search: "",
         searchPlaceholder: "Procurar...",
-        info: "_TOTAL_ sugest&otilde;es de minist&eacute;rios",
+        info: "_TOTAL_ sugestões de ministérios",
         loadingRecords: "Aguarde - carregando...",
         paginate: {
           first: '<<',
@@ -25,7 +41,12 @@ $(document).ready(function () {
           last: '>>'
         }
       },
-      data: prepareData(),
+      ajax: {
+        type: "POST",
+        url: `${jsLIB.rootDir}app/api/tests/`,
+        data: () => ({ MethodName: "questoesMinisterios" }),
+        dataSrc: data => data.questoes,
+      },
       columns: [
         {
           data: 'da',
@@ -53,7 +74,6 @@ $(document).ready(function () {
             $(rows).eq(i).before(
               '<tr style="background-color:#707070;color:#ffffff;text-transform:uppercase"><td colspan="2">' + group + '</td></tr>'
             );
-
             last = group;
           }
         });
@@ -71,28 +91,14 @@ $(document).ready(function () {
     });
 
   $('#btnFinishMinisterios').click(function () {
-    jsLIB.ajax({ url: `${jsLIB.rootDir}app/api/tests/`, data: { MethodName: 'finalizarMinisterios' } });
-    window.location.reload(true);
+    jsLIB.ajax({
+      url: `${jsLIB.rootDir}app/api/tests/`,
+      data: { MethodName: 'finalizarMinisterios' },
+      success: data => {
+        window.location.reload(true);
+      }
+    });
   });
 
 });
 
-function prepareData() {
-  data = jsLIB.ajax({ url: `${jsLIB.rootDir}app/api/tests/`, data: { MethodName: 'questoesMinisterios' } });
-  return data.questoes;
-}
-
-function mapQuestao() {
-  $("[name=questao]").change(function (e) {
-    var value = $(this).val();
-    jsLIB.ajax({
-      url: `${jsLIB.rootDir}app/api/tests/`,
-      data: { MethodName: 'setRsMinisterios', data: { id_qs: $(this).attr('id-questao'), grade: value } },
-      success: function (data, jqxhr) {
-        if (data.return == true) {
-          e.preventDefault();
-        }
-      }
-    });
-  });
-}

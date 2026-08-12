@@ -96,10 +96,13 @@ function register($parameters)
   //Verificacao de Usuario/Senha
   if (isset($usr) && !empty($usr)):
     if ($psw != $cnf):
-      $arr['message'] = "Senha e confirma&ccedil;&atilde;o da senha s&atilde;o diferentes.";
+      $arr['message'] = "Senha e confirmaçãoo da senha são diferentes.";
     else:
 
       $result = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE email = ?", array($usr));
+
+      $protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+      $host = $_SERVER['HTTP_HOST'] . CFG::Root();
 
       //SE EXISTE CADASTRO
       if (!$result->EOF):
@@ -122,7 +125,7 @@ function register($parameters)
             Profile::VerificaPerfil($idBD);
             Testes::VerificaTestes($idBD);
             Profile::SetSessionLogin($result);
-            $arr['page'] = CFG::Root() . "app/view/dashboard.php";
+            $arr['page'] = "$protocolo://$host" . "app/view/dashboard.php";
             $arr['register'] = true;
 
           //TEM SENHA NO BANCO, MAS NAO LEMBRA A SENHA
@@ -137,42 +140,30 @@ function register($parameters)
       //SE CADASTRO NAO EXISTE
       else:
         $valido = md5($usr . $psw . strtotime("now"));
-        $GLOBALS['mail']->ClearAllRecipients();
-        $GLOBALS['mail']->AddAddress($usr, $nam);
-        $GLOBALS['mail']->Subject = "Bem vindo ao site pexsys.info/dons";
-
-        $linkValid = "http://pexsys.info/dons/register.php?id=$valido";
+        $mail = Mail::Get();
+        $mail->ClearAllRecipients();
+        $mail->AddAddress($usr, $nam);
+        $mail->Subject = "Bem vindo ao site pexsys.info/dons";
+        $linkValid = "$protocolo://$host" . "register.php?id=$valido";
+        $mail->MsgHTML(str_replace(array("&lt;", "&gt;"), array("<", ">"), htmlentities("
+        Caro(a) usuário(a),<br/>
+        <br/>
+        Esta mensagem refere-se a solicitação de registro no site de dons do pexsys.info.<br/>
+        <br/>
+        Desde já, agradecemos seu registro e esperamos que nosso site lhe ajude a encontrar seus dons, e que estes possam lhe guiar ao seu ministério, e sendo assim, que seu ministério possa ajudá-lo a ser feliz trabalhando para Deus.<br/>
+        <br/>
+        Para confirmar seu cadastro, acesse o endereço abaixo:<br/>
+        <a href=\"$linkValid\">$linkValid</a><br/>
+        <br/>
+        Um grande abraço<br/>
+        <br/>
+        pexsys.info/dons<br/>
+        ", ENT_NOQUOTES, 'UTF-8', false)));
 
         //Mensagem
-        $body = "<html>";
-        $body = "<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>";
-        $body .= "<head>";
-        $body .= "<title>Registro pexsys.info</title>";
-        $body .= "</head>";
-        $body .= "<body style=\"font-family:Arial;\">";
-        $body .= utf8_decode("Caro(a) usuário(a),") . "<br/>";
-        $body .= "<br/>";
-        $body .= utf8_decode("Esta mensagem refere-se a solicitação de registro no site de dons do pexsys.info.") . "<br/>";
-        $body .= "<br/>";
-        $body .= utf8_decode("Desde já, agradecemos seu registro e esperamos que nosso site lhe ajude a encontrar seus dons, e que estes possam lhe guiar ao seu ministério, e sendo assim, que seu ministério possa ajudá-lo a ser feliz trabalhando para Deus.") . "<br/>";
-        $body .= "<br/>";
-        $body .= utf8_decode("Para confirmar seu cadastro, acesse o endereço abaixo:") . "<br/>";
-        $body .= "<a href=\"$linkValid\">$linkValid</a>" . "<br/>";
-        $body .= "<br/>";
-        $body .= utf8_decode("Um grande abraço") . "<br/>";
-        $body .= "<br/>";
-        $body .= utf8_decode("pexsys.info/dons") . "<br/>";
-        $body .= "</body>";
-        $body .= "</html>";
-        $GLOBALS['mail']->MsgHTML($body);
-
-        if ($GLOBALS['mail']->Send()):
-          CONN::get()->Execute("
-            INSERT INTO CD_PERSON (email, pass, nm, cd_valid, is_active)
-            VALUES(?,?,?,?,?)
-          ", array($usr, $psw, $nam, $valido, 'N'));
-
-          $arr['page'] = CFG::Root() . "register.php?hint=$usr";
+        if ($mail->Send()):
+          CONN::get()->Execute("INSERT INTO CD_PERSON (email, pass, nm, cd_valid, is_active) VALUES(?,?,?,?,?)", array($usr, $psw, $nam, $valido, 'N'));
+          $arr['page'] = "$protocolo://$host" . "register.php?hint=$usr";
           $arr['register'] = true;
 
         else:
@@ -191,41 +182,31 @@ function register($parameters)
 function fSetRecover($result, $ret)
 {
   $valido = md5($result->fields["id"] . $result->fields["pass"] . strtotime("now"));
+  $protocolo = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+  $host = $_SERVER['HTTP_HOST'] . CFG::Root();
 
-  $GLOBALS['mail']->ClearAllRecipients();
-  $GLOBALS['mail']->AddAddress($result->fields["email"], $result->fields["nm"]);
-  $GLOBALS['mail']->Subject = "Bem vindo ao site pexsys.info";
+  $mail = Mail::Get();
+  $mail->ClearAllRecipients();
+  $mail->AddAddress($result->fields["email"], $result->fields["nm"]);
+  $mail->Subject = "Bem vindo ao site pexsys.info/dons";
+  $linkValid = "$protocolo://$host" . "define.php?id=$valido";
+  $mail->MsgHTML(str_replace(array("&lt;", "&gt;"), array("<", ">"), htmlentities("
+  Caro(a) usuário(a),<br/>
+  <br/>
+  Esta mensagem refere-se a solicitação de recuperação e/ou ativação de sua conta no site pexsys.info/dons.<br/>
+  <br/>
+  Desde já, agradecemos seu interesse em continuar conosco e esperamos que nosso site continue a lhe ajudar em sua caminhada cristã com seus dons e ministérios.<br/>
+  <br/>
+  Para confirmar seu pedido, acesse o endereço abaixo:<br/>
+  <a href=\"$linkValid\">$linkValid</a><br/>
+  <br/>
+  Um grande abraço,<br/>
+  pexsys.info/dons<br/>
+  ", ENT_NOQUOTES, 'UTF-8', false)));
 
-  $linkValid = "http://pexsys.info/dons/define.php?id=$valido";
-
-  //Mensagem
-  $body = "<html>";
-  $body = "<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'>";
-  $body .= "<head>";
-  $body .= "<title>Registro pexsys.info</title>";
-  $body .= "</head>";
-  $body .= "<body style=\"font-family:Arial;\">";
-  $body .= utf8_decode("Caro(a) usuário(a),") . "<br/>";
-  $body .= "<br/>";
-  $body .= utf8_decode("Esta mensagem refere-se a solicitação de recuperação e/ou ativação de sua conta no site pexsys.info.") . "<br/>";
-  $body .= "<br/>";
-  $body .= utf8_decode("Desde já, agradecemos seu interesse em continuar conosco e esperamos que nosso site continue a lhe ajudar em sua caminhada cristã com seus dons e ministérios.") . "<br/>";
-  $body .= "<br/>";
-  $body .= utf8_decode("Para confirmar seu pedido, acesse o endereço abaixo:") . "<br/>";
-  $body .= "<a href=\"$linkValid\">$linkValid</a>" . "<br/>";
-  $body .= "<br/>";
-  $body .= utf8_decode("Um grande abraço,") . "<br/>";
-  $body .= utf8_decode("pexsys.info/dons") . "<br/>";
-  $body .= "</body>";
-  $body .= "</html>";
-  $GLOBALS['mail']->MsgHTML($body);
-
-  if ($GLOBALS['mail']->Send()):
-    CONN::get()->Execute(
-      "UPDATE CD_PERSON SET cd_valid = ? WHERE id = ?",
-      array($valido, $result->fields["id"])
-    );
-    $ret['page'] = CFG::Root() . "register.php?hint=" . $result->fields["email"];
+  if ($mail->Send()):
+    CONN::get()->Execute("UPDATE CD_PERSON SET cd_valid = ? WHERE id = ?", array($valido, $result->fields["id"]));
+    $ret['page'] = "$protocolo://$host" . "register.php?hint=" . $result->fields["email"];
     $ret['register'] = true;
 
   else:

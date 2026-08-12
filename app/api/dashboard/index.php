@@ -128,7 +128,7 @@ function painel()
   endif;
 
   //NUMERO DE PESSOAS COM RESULTADO DE DONS
-  $rs = CONN::get()->Execute("SELECT DISTINCT id_cd_person FROM HS_RESULTS WHERE tp = ?", array('D'));
+  $rs = CONN::get()->Execute("SELECT DISTINCT cd_person FROM HS_RESULTS WHERE tp = ?", array('D'));
   if (!$rs->EOF):
     $arr[] = array(
       "leftBkTheme" => "databox-left bg-palegreen",
@@ -142,7 +142,7 @@ function painel()
   endif;
 
   //NUMERO DE PESSOAS COM RESULTADO DE MINISTERIOS
-  $rs = CONN::get()->Execute("SELECT DISTINCT id_cd_person FROM HS_RESULTS WHERE tp = ?", array('M'));
+  $rs = CONN::get()->Execute("SELECT DISTINCT cd_person FROM HS_RESULTS WHERE tp = ?", array('M'));
   if (!$rs->EOF):
     $arr[] = array(
       "leftBkTheme" => "databox-left bg-palegreen",
@@ -185,7 +185,7 @@ function painel()
 
   //NUMERO DE PESSOAS COM TESTES PENDENTES
   $rs = CONN::get()->Execute("SELECT DISTINCT 
-		* FROM (SELECT id_cd_person FROM ASW_GIFTS UNION SELECT id_cd_person FROM ASW_MINISTRIES) A");
+		* FROM (SELECT cd_person FROM ASW_GIFTS UNION SELECT cd_person FROM ASW_MINISTRIES) A");
   if (!$rs->EOF):
     $arr[] = array(
       "leftBkTheme" => "databox-left bg-themethirdcolor",
@@ -199,7 +199,7 @@ function painel()
   endif;
 
   //NUMERO DE PESSOAS SEM TESTES
-  $rs = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE id NOT IN (SELECT id_cd_person FROM HS_RESULTS)");
+  $rs = CONN::get()->Execute("SELECT * FROM CD_PERSON WHERE id NOT IN (SELECT cd_person FROM HS_RESULTS)");
   if (!$rs->EOF):
     $arr[] = array(
       "leftBkTheme" => "databox-left bg-themesecondary",

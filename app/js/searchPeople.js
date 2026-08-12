@@ -19,7 +19,7 @@ $(document).ready(function () {
       searchPlaceholder: "Procurar...",
       infoFiltered: " de _MAX_",
       loadingRecords: "Aguarde - carregando...",
-      zeroRecords: "Dados indispon&iacute;veis para esta sele&ccedil;&atilde;o",
+      zeroRecords: "Dados indisponíveis para esta seleção",
       infoEmpty: "0 encontrados"
     },
     ajax: {
@@ -106,11 +106,11 @@ $(document).ready(function () {
         nmCompleto: {
           validators: {
             notEmpty: {
-              message: 'O nome completo &eacute; obrigat&oacute;rio'
+              message: 'O nome completo é obrigatório'
             },
             regexp: {
               regexp: /^([a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\']{2,})+(?:\s[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ\']{1,})+$/,
-              message: 'Digite no m&iacute;nimo o nome e sobrenome sem espa&ccedil;os no final'
+              message: 'Digite no mínimo o nome e sobrenome sem espaços no final'
             }
           }
         },
@@ -118,7 +118,7 @@ $(document).ready(function () {
           validators: {
             regexp: {
               regexp: '^[^@\\s]+@([^@\\s]+\\.)+[^@\\s]+$',
-              message: 'Formato de email inv&aacute;lido'
+              message: 'Formato de email inválido'
             }
           }
         }
@@ -344,6 +344,7 @@ $(document).ready(function () {
       }
 
       jsLIB.ajax({
+        async: true,
         url: `${jsLIB.rootDir}app/api/tests/`,
         data: { MethodName: 'setRsDonsDirect', data: { id: $('#divTestBody').attr('id-pessoa'), qs: $(this).attr('id-questao'), col: value } },
         success: function (data, jqxhr) {
@@ -354,11 +355,8 @@ $(document).ready(function () {
         }
       });
 
-      if (value != '') {
-        $(this).parent().removeClass('has-error').addClass('has-success');
-      } else {
-        $(this).parent().removeClass('has-success').addClass('has-error');
-      }
+      if (value != '') $(this).parent().removeClass('has-error').addClass('has-success');
+      else $(this).parent().removeClass('has-success').addClass('has-error');
     });
   }
 

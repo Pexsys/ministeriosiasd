@@ -16,7 +16,7 @@ $(document).ready(function(){
 			searchPlaceholder: "Procurar...",
 			infoFiltered: " de _MAX_",
 			loadingRecords: "Aguarde - carregando...",
-			zeroRecords: "Dados indispon&iacute;veis para esta sele&ccedil;&atilde;o",
+			zeroRecords: "Dados indisponíveis para esta seleção",
 			infoEmpty: "0 encontrados"
 		},
 		ajax: {

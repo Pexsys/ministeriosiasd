@@ -9,9 +9,9 @@
         "filters" =>
         array(
           array("value" => "D", "label" => "Dom"),
-          array("value" => "DI", "label" => "Pontua&ccedil;&atilde;o igual"),
-          array("value" => "DA", "label" => "Pontua&ccedil;&atilde;o maior", "unique" => true),
-          array("value" => "DE", "label" => "Pontua&ccedil;&atilde;o menor", "unique" => true)
+          array("value" => "DI", "label" => "Pontuação igual"),
+          array("value" => "DA", "label" => "Pontuação maior", "unique" => true),
+          array("value" => "DE", "label" => "Pontuação menor", "unique" => true)
         )
       )
     ); ?>
@@ -36,9 +36,9 @@
           <thead class="bordered-darkorange">
             <tr role="row">
               <th>Nome</th>
-              <th>C&oacute;digo</th>
+              <th>Código</th>
               <th>Dom</th>
-              <th>Pontua&ccedil;&atilde;o</th>
+              <th>Pontuação</th>
             </tr>
           </thead>
           <tbody />
@@ -47,4 +47,4 @@
     </div>
   </div>
 </div>
-<script src="<?= CFG::Root(); ?>app/js/searchGift.js<?php echo "?" . microtime(); ?>"></script>
+<script src="<?= CFG::Root(); ?>app/js/searchGift.js<?= "?" . microtime(); ?>"></script>

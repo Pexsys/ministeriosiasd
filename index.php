@@ -6,12 +6,12 @@ Session::Clear();
 <html xmlns="http://www.w3.org/1999/xhtml" ng-app="angular-app">
 <head>
   <meta charset="utf-8" />
-  <title>Minist&eacute;rios IASD - Conecte-se</title>
+  <title>Ministérios IASD - Conecte-se</title>
   <meta name="description" content="Dashboard" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel="shortcut icon" href="<?= CFG::Root(); ?>img/logo.png" type="image/x-icon">
+  <link rel="shortcut icon" href="<?= CFG::Root(); ?>img/favico.png" type="image/x-icon">
   <link href="<?= CFG::Root(); ?>assets/css/bootstrap.min.css" rel="stylesheet" />
   <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
   <link href="<?= CFG::Root(); ?>assets/css/font-awesome.min.css" rel="stylesheet" />
@@ -62,7 +62,7 @@ Session::Clear();
               <i class="fa fa-envelope green"></i>
               <input class="form-control" name="email" id="email" type="email" placeholder="Email"
                 data-bv-emailaddress="true"
-                data-bv-emailaddress-message="Email inv&aacute;lido" />
+                data-bv-emailaddress-message="Email inválido" />
             </span>
           </div>
         </div>
@@ -72,7 +72,7 @@ Session::Clear();
               <i class="fa fa-lock green"></i>
               <input type="password" class="form-control" name="psw" id="psw" placeholder="Senha"
                 data-bv-notempty="true"
-                data-bv-notempty-message="Senha obrigat&oacute;ria" />
+                data-bv-notempty-message="Senha obrigatória" />
             </span>
           </div>
         </div>
@@ -80,9 +80,9 @@ Session::Clear();
           <button type="submit" class="btn btn-palegreen btn-block"><span class="glyphicon glyphicon-off"></span>&nbsp;Entrar</button>
         </div>
         <div class="loginbox-signup">
-          <a href="define.php">Esqueci</a> ou <a href="define.php">n&atilde;o tenho</a> a senha.<br />
+          <a href="define.php">Esqueci</a> ou <a href="define.php">não tenho</a> a senha.<br />
           Acesso <a href="define.php">bloqueado</a>?<br />
-          Ainda n&atilde;o registrado? <a href="register.php">Registre-se</a>!<br />
+          Ainda não registrado? <a href="register.php">Registre-se</a>!<br />
         </div>
       </form>
     </div>

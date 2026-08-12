@@ -5,13 +5,12 @@
 <script src="<?= CFG::Root(); ?>assets/js/jquery-progress-bar.js"></script>
 <?php
 $testes = Testes::VerificaTestes($_SESSION['PESSOA']['id']);
-var_dump($testes);
 
 //SE EXISTE TESTE DE DONS PENDENTE
-if ($testes["dons"]["nr_rsp"] >= 0):
+if (isset($testes["dons"]) && $testes["dons"]["nr_rsp"] > 0):
 ?>
   <div class="row">
-    <div class="col-xs-12 col-md-12 text-center">
+    <div class="col-xs-12 col-md-12 text-center" style="margin-bottom:10px">
       <a id="btnFinishDons" href="javascript:void(0);" class="btn btn-labeled btn-palegreen">
         <i class="btn-label glyphicon glyphicon-floppy-saved"></i>Finalizar e mostrar meu resultado do Teste de Dons
       </a>
@@ -26,13 +25,13 @@ if ($testes["dons"]["nr_rsp"] >= 0):
     <div class="col-xs-12 col-md-12">
       <div class="widget">
         <div class="widget-header bordered-bottom bordered-yellow">
-          <span class="widget-caption">Responda as quest&otilde;es em todas as p&aacute;ginas abaixo:</span>
+          <span class="widget-caption">Responda as questões em todas as páginas abaixo:</span>
         </div>
         <div class="widget-body">
           <table class="table table-condensed table-hover compact cell-border" id="simpledatatable">
             <thead class="bordered-darkorange">
               <tr>
-                <th>Selecione a resposta que melhor se encaixa a voc&ecirc; para cada quest&atilde;o abaixo:</th>
+                <th>Selecione a resposta que melhor se encaixa a você para cada questão abaixo:</th>
               </tr>
             </thead>
             <tbody />
@@ -55,18 +54,18 @@ foreach (Testes::ExistHistorico($_SESSION['PESSOA']['id'], 'D') as $result):
           <?php
           if (!$ultimoResultado):
             $ultimoResultado = true;
-            echo "<span class=\"btn btn-primary\">&Uacute;LTIMO RESULTADO</span>&nbsp;";
+            echo "<span class=\"btn btn-primary\">ÚLTIMO RESULTADO</span>&nbsp;";
           endif;
           ?>
-          Conclu&iacute;do&nbsp;em:&nbsp;<?php echo strftime("%d/%m/%Y", strtotime($result['dh_conclusion'])); ?>
-          <span class="pull-right" style="cursor:pointer" name="printResult" id-teste="<?php echo $result['id']; ?>"><i class="fa fa-search-plus fa-2x"></i></span>
+          Concluído em <?= Conversion::StrToDate($result['dh_conclusion'], "d/m/Y"); ?>
+          <span class="pull-right" style="cursor:pointer" name="printResult" id-teste="<?= $result['id']; ?>"><i class="fa fa-search-plus fa-2x"></i></span>
         </div>
         <table class="table table-hover">
           <thead class="bordered-darkorange">
             <tr>
               <th>Ordem</th>
               <th>Dom</th>
-              <th>Pontua&ccedil;&atilde;o</th>
+              <th>Pontuação</th>
             </tr>
           </thead>
           <tbody>
@@ -74,10 +73,10 @@ foreach (Testes::ExistHistorico($_SESSION['PESSOA']['id'], 'D') as $result):
             $ordem = 0;
             foreach (Testes::QueryResult($result['id']) as $rsitem):
             ?>
-              <tr name="detalheDom" id-ref="<?php echo $rsitem['id_source']; ?>" style="cursor:pointer">
-                <td><?php echo ++$ordem; ?>&ordm;</td>
-                <td><?php echo utf8_encode($rsitem['ds']); ?></td>
-                <td><?php echo $rsitem['seq']; ?></td>
+              <tr name="detalheDom" id-ref="<?= $rsitem['id_source']; ?>" style="cursor:pointer">
+                <td><?= ++$ordem; ?>&ordm;</td>
+                <td><?= $rsitem['ds']; ?></td>
+                <td><?= $rsitem['seq']; ?></td>
               </tr>
             <?php
             endforeach;
@@ -90,4 +89,4 @@ foreach (Testes::ExistHistorico($_SESSION['PESSOA']['id'], 'D') as $result):
 <?php
 endforeach;
 ?>
-<script src="<?= CFG::Root(); ?>app/js/dashboard_testedons.js<?php echo "?" . microtime(); ?>"></script>
+<script src="<?= CFG::Root(); ?>app/js/dashboard_testedons.js<?= "?" . microtime(); ?>"></script>

@@ -8,6 +8,7 @@ class TESTEDONS extends TCPDF
   //lines styles
   private $stLine;
   private $stLine2;
+  private $stLine3;
   private $posY;
   private $lineAlt;
   private $params;
@@ -44,11 +45,6 @@ class TESTEDONS extends TCPDF
     $this->SetFooterMargin(10);
   }
 
-  private function legendaResultado($nota)
-  {
-    return Testes::LegendaDisposicao($nota);
-  }
-
   public function setResult($fields)
   {
     $this->params = $fields;
@@ -76,7 +72,7 @@ class TESTEDONS extends TCPDF
     $this->setCellPaddings(0, 0, 0, 0);
     $this->setXY(0, 0);
     $this->posY = 5;
-    $this->Image("logo.jpg", 5, 5, 38, 20, 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+    $this->Image("../../img/logo.png", 5, 5, 38, 20, 'PNG', '', 'T', false, 300, '', false, false, 0, false, false, false);
     $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 18);
     $this->SetFillColor(50, 50, 50);
     $this->SetTextColor(255, 255, 255);
@@ -128,7 +124,7 @@ class TESTEDONS extends TCPDF
     if (!empty($f["prefix"])):
       $this->SetFont(PDF_FONT_NAME_MAIN, 'B', 20);
       $this->setXY(55, $this->posY + 15);
-      $this->Cell(150, 30, utf8_encode($f["prefix"]) . (substr($f["prefix"], -1) == ":" ? "" : "..."), 'TLBR', 1, 'C', 1, '', true, false, 'C', 'M');
+      $this->Cell(150, 30, $f["prefix"] . (substr($f["prefix"], -1) == ":" ? "" : "..."), 'TLBR', 1, 'C', 1, '', true, false, 'C', 'M');
     endif;
     $this->posY += 7;
 
@@ -163,7 +159,7 @@ class TESTEDONS extends TCPDF
         $this->setXY($x, $this->posY);
         $this->StartTransform();
         $this->Rotate(90);
-        $this->Cell(40, 10, $fo["nr_peso"] . " - " . utf8_encode($fo["ds"]), 'TLRB', 1, 'L', 1, '', 1, false, 'C', 'M');
+        $this->Cell(40, 10, $fo["nr_peso"] . " - " . $fo["ds"], 'TLRB', 1, 'L', 1, '', 1, false, 'C', 'M');
         $this->StopTransform();
         $x += 10;
       endforeach;
@@ -183,7 +179,7 @@ class TESTEDONS extends TCPDF
       $this->Cell(10, 12, "", 'TLBR', 1, 'L', 1, '', 0, false, 'C', 'M');
       $x += 10;
     endforeach;
-    $this->MultiCell(150, 12, utf8_encode($f["ds"]), 'TLBR', 'L', 1, 1, $x, $this->posY - 6, true, 0);
+    $this->MultiCell(150, 12, $f["ds"], 'TLBR', 'L', 1, 1, $x, $this->posY - 6, true, 0);
     $this->posY += 12;
     $this->lineAlt = !$this->lineAlt;
     return $opcoes;
@@ -201,7 +197,7 @@ class TESTEDONS extends TCPDF
   {
     $option = !isset($option) || empty($option) ? "D" : $option;
     $this->lastPage();
-    $this->Output("TesteDons_" . date('Y-m-d_H:i:s') . ".pdf", $option);
+    $this->Output("TesteDons_" . Formatter::DateTimeNow('Y-m-d_H:i:s') . ".pdf", $option);
   }
 }
 
@@ -226,4 +222,3 @@ foreach ($result as $ra => $f):
 endforeach;
 
 $pdf->download(fRequest("option"));
-exit;

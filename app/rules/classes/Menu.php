@@ -19,7 +19,7 @@ class Menu
       endif;
       echo "<li$class>";
       if (!$urlEmpty):
-        echo "<a href=\"" . CFG::Root() . "dashboard.php?id=$key\">";
+        echo "<a href=\"" . CFG::Root() . "app/view/dashboard.php?id=$key\">";
       else:
         echo "<a href=\"#\" class=\"menu-dropdown\">";
       endif;

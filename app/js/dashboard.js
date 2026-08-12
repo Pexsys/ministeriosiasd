@@ -13,7 +13,7 @@ function mapPrintResults() {
 
     jsLIB.dialogBox({
       title: 'Visualizar PDF',
-      message: $(`<embed id="oEmbedPrint" width="100%" height="100%" src="${jsLIB.rootDir}report/printResult.php?id=${testeID}&timestamp=${(new Date()).getMilliseconds()}" type="application/pdf" />`),
+      message: $(`<embed id="oEmbedPrint" width="100%" height="100%" src="${jsLIB.rootDir}app/report/printResult.php?id=${testeID}&timestamp=${(new Date()).getMilliseconds()}" type="application/pdf" />`),
       type: BootstrapDialog.TYPE_DEFAULT,
       size: BootstrapDialog.SIZE_WIDE,
       draggable: false,
@@ -27,7 +27,7 @@ function mapPrintResults() {
           label: 'Imprimir',
           cssClass: 'btn-success',
           action: function (dialogRef) {
-            const printW = window.open(`${jsLIB.rootDir}report/printResult.php?id=${testeID}&timestamp=${(new Date()).getMilliseconds()}`);
+            const printW = window.open(`${jsLIB.rootDir}app/report/printResult.php?id=${testeID}&timestamp=${(new Date()).getMilliseconds()}`);
             printW.print();
           }
         },

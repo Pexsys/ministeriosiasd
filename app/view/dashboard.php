@@ -46,7 +46,7 @@ $perfil = fSetActive($arvore, fRequest("id"));
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <link rel="shortcut icon" href="<?= CFG::Root(); ?>img/logo.png" type="image/x-icon">
+  <link rel="shortcut icon" href="<?= CFG::Root(); ?>img/favico.png" type="image/x-icon">
   <link id="bootstrap-rtl-link" href="" rel="stylesheet" />
   <link id="skin-link" href="" rel="stylesheet" type="text/css" />
   <link href="<?= CFG::Root(); ?>assets/css/bootstrap.min.css" rel="stylesheet" />
@@ -69,11 +69,9 @@ $perfil = fSetActive($arvore, fRequest("id"));
   <script src="<?= CFG::Root(); ?>assets/js/formValidation/formValidation.min.js"></script>
   <script src="<?= CFG::Root(); ?>assets/js/formValidation/bootstrap.min.js"></script>
   <script src="<?= CFG::Root(); ?>assets/js/slimscroll/jquery.slimscroll.min.js"></script>
-  <script src="<?= CFG::Root(); ?>app/js/functions.lib.js?<?php echo microtime(); ?>"></script>
-  <script>
-    jsLIB.rootDir = '<?= CFG::Root(); ?>';
-  </script>
-  <script src="<?= CFG::Root(); ?>app/js/dashboard.js?<?php echo microtime(); ?>"></script>
+  <script src="<?= CFG::Root(); ?>app/js/functions.lib.js?<?= microtime(); ?>"></script>
+  <script>jsLIB.rootDir = '<?= CFG::Root(); ?>';</script>
+  <script src="<?= CFG::Root(); ?>app/js/dashboard.js?<?= microtime(); ?>"></script>
 </head>
 <body>
   <div class="loading-container">
@@ -98,11 +96,11 @@ $perfil = fSetActive($arvore, fRequest("id"));
               <li>
                 <a class="login-area dropdown-toggle" data-toggle="dropdown">
                   <section>
-                    <h2><span class="profile"><span><?php echo ucwords(mb_strtolower($pessoa['nm'])); ?></span></span></h2>
+                    <h2><span class="profile"><span><?= ucwords(mb_strtolower($pessoa['nm'])); ?></span></span></h2>
                   </section>
                 </a>
                 <ul class="pull-right dropdown-menu dropdown-arrow dropdown-login-area">
-                  <li class="email"><a><?php echo strtolower($pessoa['email']); ?></a></li>
+                  <li class="email"><a><?= strtolower($pessoa['email']); ?></a></li>
                   <li class="theme-area">
                     <ul class="colorpicker" id="skin-changer">
                       <li><a class="colorpick-btn" href="#" style="background-color:#5DB2FF;" rel="<?= CFG::Root(); ?>assets/css/skins/blue.min.css"></a></li>
@@ -139,7 +137,7 @@ $perfil = fSetActive($arvore, fRequest("id"));
 						<i class="searchicon fa fa-search"></i>
 						<div class="searchhelper"></div>
 					</div> -->
-          <!-- <?php $activeOpt = Menu::Monta($perfil); ?> -->
+          <?php $activeOpt = Menu::Monta($perfil); ?>
         </ul>
       </div>
       <div class="page-content">
@@ -147,14 +145,14 @@ $perfil = fSetActive($arvore, fRequest("id"));
           <ul class="breadcrumb">
             <li>
               <i class="fa fa-home"></i>
-              <a href="dashboard.php">Home</a>
+              <a href="<?= CFG::Root(); ?>app/view/dashboard.php">Home</a>
             </li>
-            <?php echo $GLOBALS["breadCrumb"]; ?>
+            <?= $GLOBALS["breadCrumb"]; ?>
           </ul>
         </div>
         <div class="page-header position-relative">
           <div class="header-title">
-            <h1><?php echo $activeOpt["opt"]; ?></h1>
+            <h1><?= $activeOpt["opt"]; ?></h1>
           </div>
           <div class="header-buttons">
             <a class="sidebar-toggler" href="#"><i class="fa fa-arrows-h"></i></a>

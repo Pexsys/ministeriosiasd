@@ -8,7 +8,7 @@
         "filterTo" => "#ministerDatatable",
         "filters" =>
         array(
-          array("value" => "M", "label" => "Minist&eacute;rio"),
+          array("value" => "M", "label" => "Ministério"),
           array("value" => "MI", "label" => "Nota igual"),
           array("value" => "MA", "label" => "Nota maior", "unique" => true),
           array("value" => "ME", "label" => "Nota menor", "unique" => true)
@@ -36,8 +36,8 @@
           <thead class="bordered-darkorange">
             <tr role="row">
               <th>Nome</th>
-              <th>C&oacute;digo</th>
-              <th>Minist&eacute;rio</th>
+              <th>Código</th>
+              <th>Ministério</th>
               <th>Nota</th>
             </tr>
           </thead>
@@ -47,4 +47,4 @@
     </div>
   </div>
 </div>
-<script src="<?= CFG::Root(); ?>app/js/searchMinister.js<?php echo "?" . microtime(); ?>"></script>
+<script src="<?= CFG::Root(); ?>app/js/searchMinister.js<?= "?" . microtime(); ?>"></script>

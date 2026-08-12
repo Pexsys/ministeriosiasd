@@ -75,14 +75,12 @@ function getDons($parameters)
   $arr = array();
   $result = getQueryByFilterGifts($parameters);
   if (!is_null($result)):
-    foreach ($result as $k => $fields):
-      $arr[] = array(
-        "nm" => utf8_encode($fields["nm"]),
-        "cd" => $fields["cd"],
-        "dm" => utf8_encode($fields["ds"]),
-        "nt" => $fields["seq"]
-      );
-    endforeach;
+    foreach ($result as $k => $fields) $arr[] = array(
+      "nm" => $fields["nm"],
+      "cd" => $fields["cd"],
+      "dm" => $fields["ds"],
+      "nt" => $fields["seq"]
+    );
   endif;
   return array("result" => true, "dons" => $arr);
 }
@@ -92,7 +90,6 @@ function getQueryByFilterMinisters($parameters)
   $where = "";
   $aWhere = array("M");
   if (isset($parameters["filters"])):
-    $keyAnt = "";
     foreach ($parameters["filters"] as $key => $v):
       $not = false;
       if (isset($v["fg"])):
@@ -164,14 +161,12 @@ function getMinisterios($parameters)
   $arr = array();
   $result = getQueryByFilterMinisters($parameters);
   if (!is_null($result)):
-    foreach ($result as $k => $fields):
-      $arr[] = array(
-        "nm" => utf8_encode($fields["nm"]),
-        "cd" => $fields["cd"],
-        "mn" => utf8_encode($fields["ds"]),
-        "nt" => Testes::LegendaDisposicao($fields["seq"])
-      );
-    endforeach;
+    foreach ($result as $k => $fields) $arr[] = array(
+      "nm" => $fields["nm"],
+      "cd" => $fields["cd"],
+      "mn" => $fields["ds"],
+      "nt" => Testes::LegendaDisposicao($fields["seq"])
+    );
   endif;
   return array("result" => true, "ministers" => $arr);
 }

@@ -46,14 +46,14 @@
           "filters" =>
           array(
             array("value" => "D", "label" => "Dom"),
-            array("value" => "DI", "label" => "Pontua&ccedil;&atilde;o Dons igual"),
-            array("value" => "DA", "label" => "Pontua&ccedil;&atilde;o Dons maior", "unique" => true),
-            array("value" => "DE", "label" => "Pontua&ccedil;&atilde;o Dons menor", "unique" => true),
+            array("value" => "DI", "label" => "Pontuação Dons igual"),
+            array("value" => "DA", "label" => "Pontuação Dons maior", "unique" => true),
+            array("value" => "DE", "label" => "Pontuação Dons menor", "unique" => true),
 
-            array("value" => "M", "label" => "Minist&eacute;rio"),
-            array("value" => "MI", "label" => "Nota Minist&eacute;rio igual"),
-            array("value" => "MA", "label" => "Nota Minist&eacute;rio maior", "unique" => true),
-            array("value" => "ME", "label" => "Nota Minist&eacute;rio menor", "unique" => true)
+            array("value" => "M", "label" => "Ministério"),
+            array("value" => "MI", "label" => "Nota Ministério igual"),
+            array("value" => "MA", "label" => "Nota Ministério maior", "unique" => true),
+            array("value" => "ME", "label" => "Nota Ministério menor", "unique" => true)
           )
         )
       ); ?>
@@ -81,7 +81,7 @@
                 <th>Nome</th>
                 <th>Email</th>
                 <th>Dons</th>
-                <th>Minist&eacute;rios</th>
+                <th>Ministérios</th>
               </tr>
             </thead>
             <tbody />
@@ -101,7 +101,7 @@
     <div class="modal-body">
       <div class="widget radius-bordered">
         <div class="widget-header bg-lightred">
-          <span class="widget-caption">Cadastro de Pessoa / Usu&aacute;rio</span>
+          <span class="widget-caption">Cadastro de Pessoa / Usuário</span>
           <span class="widget-caption pull-right" data-dismiss="modal" class="close" type="button" id="btnX">&times;&nbsp;&nbsp;</span>
         </div>
         <div class="widget-body">
@@ -125,7 +125,7 @@
           <div class="row">
             <div class="col-xs-12 col-md-12">
               <a href="#" id="btnDonsDlg" class="btn btn-warning btn-xs" style="display:none"><i class="fa fa-plus"></i> Adicionar Teste de Dons</a>
-              <a href="#" id="btnMiniDlg" class="btn btn-warning btn-xs" style="display:none"><i class="fa fa-plus"></i> Adicionar Teste de Minist&eacute;rios</a>
+              <a href="#" id="btnMiniDlg" class="btn btn-warning btn-xs" style="display:none"><i class="fa fa-plus"></i> Adicionar Teste de Ministérios</a>
             </div>
           </div>
         </div>
@@ -133,4 +133,4 @@
     </div>
   </div>
 </div>
-<script src="<?= CFG::Root(); ?>app/js/searchPeople.js<?php echo "?" . microtime(); ?>"></script>
+<script src="<?= CFG::Root(); ?>app/js/searchPeople.js<?= "?" . microtime(); ?>"></script>

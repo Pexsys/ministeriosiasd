@@ -850,9 +850,9 @@ var jsFilter = {
           "<label for=\"optFilter" + value + "\" class=\"pull-left\">" + label + ":&nbsp;</label>" +
           "<span class=\"label label-danger pull-right\" style=\"cursor:pointer\" onclick=\"jsFilter.removeFilter(this);\" filter-unique=\"" + unique + "\" filter-value=\"" + value + "\" filter-label=\"" + label + "\"><i class=\"glyphicon glyphicon-remove\"></i>&nbsp;Remover</span>";
         if (flt.domain.length > 5 && !unique) {
-          strAppend += "<span class=\"pull-right\"><label for=\"notFilter" + value + "\"><input type=\"checkbox\" id=\"notFilter" + value + "\"><span class=\"text\">N&atilde;o</span></label>&nbsp;&nbsp;</span>";
+          strAppend += "<span class=\"pull-right\"><label for=\"notFilter" + value + "\"><input type=\"checkbox\" id=\"notFilter" + value + "\"><span class=\"text\">Não</span></label>&nbsp;&nbsp;</span>";
         }
-        strAppend += "<select class=\"selectpicker form-control input-sm\" id=\"optFilter" + value + "\" filter-field=\"" + value + "\"" + (!unique ? " multiple data-selected-text-format=\"count > 3\"" : "") + " title=\"Escolha uma ou mais op&ccedil;&otilde;es\" data-width=\"100%\" data-container=\"body\"";
+        strAppend += "<select class=\"selectpicker form-control input-sm\" id=\"optFilter" + value + "\" filter-field=\"" + value + "\"" + (!unique ? " multiple data-selected-text-format=\"count > 3\"" : "") + " title=\"Escolha uma ou mais opções\" data-width=\"100%\" data-container=\"body\"";
         if (flt.domain.length > 8 && !unique) {
           strAppend += " data-live-search=\"true\"";
           strAppend += " data-actions-box=\"true\"";

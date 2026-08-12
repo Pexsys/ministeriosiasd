@@ -41,13 +41,11 @@ class CONN
   {
     $arr = array();
     $result = static::get()->Execute("SELECT id, ds, cd FROM $table ORDER BY ds");
-    foreach ($result as $k => $fields):
-      $arr[] = array(
-        "value"  => $fields["id"],
-        "label"  => utf8_encode($fields["ds"]),
-        "sub" => $fields["cd"]
-      );
-    endforeach;
+    foreach ($result as $k => $fields) $arr[] = array(
+      "value" => $fields["id"],
+      "label" => $fields["ds"],
+      "sub" => $fields["cd"]
+    );
     return $arr;
   }
 }
